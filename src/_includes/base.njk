@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }} // {% endif %}WORTH.EE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Space Grotesk', "PingFang SC", sans-serif;
+            background-color: #f7f7f7;
+            color: #111111;
+            cursor: crosshair;
+            overflow: hidden;
+        }
+        @media (max-width: 768px) {
+            body { overflow: auto; cursor: auto; }
+        }
+        .font-syne { font-family: 'Syne', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* ── 桌面三栏过渡 ── */
+        #leftPanel, #centerPanel {
+            transition: width 0.5s cubic-bezier(0.16,1,0.3,1),
+                        min-width 0.5s cubic-bezier(0.16,1,0.3,1),
+                        max-width 0.5s cubic-bezier(0.16,1,0.3,1);
+        }
+        .cargo-item {
+            position: relative;
+            transition: all 0.5s cubic-bezier(0.16,1,0.3,1);
+            background-color: #ffffff;
+        }
+        .cargo-item:hover { padding-left: 2rem; }
+
+        /* ── 视图切换 ── */
+        #manifestoView { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+        #manifestoView.hidden-view { display: none; }
+        #tocView { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+        #tocView.active { display: flex; }
+        #listView { display: flex; flex-direction: column; height: 100%; }
+        #listView.hidden-view { display: none; }
+        #articleView { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+        #articleView.active { display: flex; }
+
+        .toc-item { transition: all 0.3s cubic-bezier(0.16,1,0.3,1); cursor: pointer; }
+        .toc-item:hover { padding-left: 0.75rem; }
+        .toc-item.active-toc { padding-left: 0.75rem; border-left: 2px solid #111111; }
+        .back-btn { cursor: pointer; transition: opacity 0.2s; }
+        .back-btn:hover { opacity: 0.6; }
+
+        /* ── 文章正文 ── */
+        .article-body { font-size: 0.9rem; line-height: 2; color: #222; }
+        .article-body p { margin-bottom: 1.25rem; }
+        .article-body h2 {
+            font-size: 0.7rem;
+            font-family: 'Space Grotesk', monospace;
+            letter-spacing: 0.12em;
+            color: #aaa;
+            margin-top: 2.5rem;
+            margin-bottom: 0.6rem;
+            font-weight: 500;
+        }
+        .article-body ul { list-style: none; padding: 0; margin-bottom: 1.25rem; }
+        .article-body ul li::before { content: "— "; color: #aaa; }
+        .article-body a { border-bottom: 1px solid #ddd; text-decoration: none; color: inherit; }
+        .article-body a:hover { border-color: #111; }
+
+        /* ── 手机适配 ── */
+        @media (max-width: 768px) {
+            body { overflow: auto; }
+
+            /* 整体容器取消固定高度，改为自然流 */
+            #outerWrap {
+                height: auto !important;
+                min-height: 100vh;
+                overflow: visible !important;
+            }
+            #mainBody {
+                flex-direction: column !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+
+            /* 三栏全部 100% 宽，堆叠 */
+            #leftPanel {
+                width: 100% !important; max-width: 100% !important; min-width: 0 !important;
+                border-right: none !important;
+                border-bottom: 1px solid #111;
+                height: auto !important;
+            }
+            #centerPanel {
+                width: 100% !important; max-width: 100% !important; min-width: 0 !important;
+                border-right: none !important;
+                border-bottom: 1px solid #111;
+                height: auto !important;
+                overflow: visible !important;
+            }
+            #rightPanel {
+                width: 100% !important; max-width: 100% !important; min-width: 0 !important;
+                height: auto !important;
+            }
+
+            /* 左侧内容区高度 auto */
+            #manifestoView, #tocView { overflow: visible !important; height: auto; }
+            #manifestoView .flex-1 { overflow: visible !important; max-height: none !important; }
+
+            /* 中间内容区 */
+            #listView { height: auto !important; overflow: visible !important; }
+            #listView .flex-1 { overflow: visible !important; max-height: none !important; }
+            #articleView { overflow: visible !important; }
+            #articleView .flex-1 { overflow: visible !important; max-height: none !important; }
+
+            /* canvas 区在手机上隐藏（触摸体验差） */
+            #drawArea { display: none !important; }
+
+            /* 文章正文在手机上更大字号 */
+            .article-body { font-size: 1rem; line-height: 1.9; }
+        }
+    </style>
+</head>
+<body class="h-screen w-screen p-3 md:p-6 flex flex-col box-border selection:bg-[#111111] selection:text-white">
+
+<div id="outerWrap" class="border border-[#111111] w-full h-full flex flex-col justify-between relative bg-white overflow-hidden box-border">
+
+    <!-- Header -->
+    <div class="flex w-full border-b border-[#111111] h-14 md:h-16 items-center justify-between px-4 md:px-6 z-10 bg-white shrink-0">
+        <div class="font-syne text-lg md:text-xl tracking-tighter flex items-center gap-2 md:gap-3">
+            <a href="/" class="tracking-tight font-black no-underline text-inherit">WORTH.EE</a>
+            <span class="text-[9px] bg-[#111111] text-white px-2 py-0.5 font-mono">[STATUS: LIVE]</span>
+        </div>
+        <div class="text-[10px] font-mono text-neutral-400 hidden lg:block tracking-wider">
+            {{ site.location }}
+        </div>
+        <div class="font-mono text-xs tracking-widest text-neutral-800 font-medium" id="clock">00:00:00</div>
+    </div>
+
+    <!-- 主体 -->
+    <div id="mainBody" class="flex-1 flex flex-row w-full overflow-hidden min-h-0">
+
+        <!-- ① 左侧栏 -->
+        <div id="leftPanel" class="w-[32%] max-w-[32%] min-w-[32%] border-r border-[#111111] flex flex-col bg-[#fafafa] overflow-hidden box-border">
+
+            <!-- Manifesto -->
+            <div id="manifestoView" class="p-5 md:p-6 flex flex-col justify-between h-full">
+                <div class="text-[10px] font-mono text-neutral-400 tracking-widest shrink-0">[01 // MANIFESTO]</div>
+                <div class="flex-1 overflow-y-auto no-scrollbar text-xs font-bold tracking-wider leading-relaxed break-all flex flex-col justify-start mt-3">
+                    <div class="text-neutral-400 transition-colors duration-500 hover:text-neutral-600 cursor-default">
+                        <p>花園裡邊明晃晃的，紅的紅，綠的綠，新鮮漂亮。</p>
+                        <p>花開了，開了，就像睡醒了似的。鳥飛了，就像在天上逛似的。蟲子叫了，就像蟲子在說話似的。</p>
+                        <p>一切都活了，都有無限的本领，要做什麼，就做什麼。要怎麼樣，就怎麼樣，都是自由的。</p>
+                    </div>
+                    <div class="text-[#111111]">
+                        <p>倭瓜願意爬上房就爬上房，願意爬上樹就爬上樹。</p>
+                        <p>黃瓜願意開一個謊花，就開一個謊花，願意結一個黃瓜，就結一個黃瓜。若都不願意，職是一個黃瓜也不結，一朵花也不開，也沒有人問它。</p>
+                        <p>玉米願意長多高就長多高，他若願意長到天上去，也沒有人管他。</p>
+                        <p>蝴蝶飛得那麼快，大紅蝴蝶滿天飛，白蝴蝶隨風滾，要是追一只蝴蝶，那蝴蝶飛上了天，像同太陽在一起了似的，那便是追不上了。</p>
+                    </div>
+                    <div class="flex-1 min-h-[40px]"></div>
+                </div>
+                <div class="text-[10px] font-mono text-neutral-400 border-t border-neutral-200 pt-4 flex justify-between shrink-0">
+                    <span>[SOURCE: XIAO_HONG // 1940]</span>
+                    <span>[STATUS: FREE]</span>
+                </div>
+            </div>
+
+            <!-- 目录（收窄后） -->
+            <div id="tocView" class="p-4 flex flex-col h-full">
+                <div class="text-[10px] font-mono text-neutral-400 tracking-widest mb-4 flex items-center justify-between shrink-0">
+                    <span>[INDEX]</span>
+                    <span class="back-btn" id="backToManifesto">✕</span>
+                </div>
+                <div class="flex-1 overflow-y-auto no-scrollbar flex flex-col gap-1 min-h-0">
+                    {% for post in collections.posts %}
+                    <div class="toc-item py-2 border-b border-dotted border-neutral-200" data-url="{{ post.url }}">
+                        <div class="text-[9px] font-mono text-neutral-400 mb-1">[{{ loop.index | idx }}] {{ post.date | date("yyyy.MM.dd") }}</div>
+                        <div class="text-xs font-bold text-neutral-800 leading-snug">{{ post.data.title | truncate(30) }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ② 中间栏 -->
+        <div id="centerPanel" class="w-[46%] max-w-[46%] min-w-[46%] border-r border-[#111111] flex flex-col overflow-hidden bg-white box-border">
+
+            <!-- 文章列表 -->
+            <div id="listView">
+                <div class="p-4 border-b border-[#111111] text-[10px] font-mono text-neutral-400 flex justify-between bg-[#fafafa] shrink-0">
+                    <span>[INDEXED REGISTRY]</span>
+                    <span class="hidden md:block">SCROLL TO UNCOVER ↓</span>
+                </div>
+                <div class="flex-1 overflow-y-auto no-scrollbar divide-y divide-[#111111]">
+                    {% for post in collections.posts %}
+                    <div class="p-5 md:p-6 cargo-item cursor-pointer"
+                         data-url="{{ post.url }}"
+                         data-title="{{ post.data.title }}"
+                         data-date="{{ post.date | date('yyyy.MM.dd') }}"
+                         data-category="{{ post.data.category }}"
+                         data-index="{{ loop.index }}">
+                        <div class="flex items-center justify-between text-[10px] font-mono text-neutral-400 mb-2">
+                            <span>[{{ loop.index | idx }} / {{ post.data.category }}]</span>
+                            <span>{{ post.date | date("yyyy.MM.dd") }}</span>
+                        </div>
+                        <h2 class="text-base md:text-lg font-bold text-neutral-900 tracking-tight leading-snug">
+                            {{ post.data.title }}
+                        </h2>
+                        {% if post.data.excerpt %}
+                        <p class="text-xs text-neutral-400 mt-2 font-mono">{{ post.data.excerpt }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- 文章阅读视图（内容通过 fetch 动态加载） -->
+            <div id="articleView">
+                <div class="p-4 border-b border-[#111111] text-[10px] font-mono text-neutral-400 flex justify-between bg-[#fafafa] shrink-0">
+                    <span id="articleTag"></span>
+                    <span class="back-btn" id="backToList">← BACK</span>
+                </div>
+                <div class="flex-1 overflow-y-auto no-scrollbar p-6 md:p-8 min-h-0">
+                    <div id="articleDate" class="text-[10px] font-mono text-neutral-400 mb-3"></div>
+                    <h1 id="articleTitle" class="text-xl md:text-2xl font-bold tracking-tight text-neutral-900 mb-6 leading-tight"></h1>
+                    <div id="articleBody" class="article-body"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ③ 右侧栏 -->
+        <div id="rightPanel" class="w-[22%] max-w-[22%] min-w-[22%] flex flex-col justify-between bg-white overflow-hidden box-border">
+
+            <div id="drawArea" class="border-b border-[#111111] flex-1 flex flex-col relative bg-white overflow-hidden min-h-0">
+                <div class="p-4 text-[10px] font-mono text-neutral-400 border-b border-neutral-100 bg-white shrink-0">[DRAW_SPACE // INTERACTIVE]</div>
+                <div class="flex-1 relative w-full h-full bg-white select-none">
+                    <canvas id="drawCanvas" class="absolute inset-0 w-full h-full block"></canvas>
+                </div>
+            </div>
+
+            <div class="p-5 md:p-6 bg-white flex flex-col gap-2.5 font-mono text-xs shrink-0">
+                <div class="text-neutral-400 text-[10px] mb-1 tracking-wider">[CONTACT_SIGNAL]</div>
+                <a href="mailto:{{ site.email }}" class="group flex justify-between items-center py-1 border-b border-dotted border-neutral-200 hover:border-[#111111] transition-colors no-underline text-inherit">
+                    <span class="group-hover:translate-x-1 transition-transform duration-300">→ {{ site.email | upper }}</span>
+                    <span class="text-neutral-400 group-hover:text-[#111111]">[MAIL]</span>
+                </a>
+                <a href="/feed.xml" class="group flex justify-between items-center py-1 border-b border-dotted border-neutral-200 hover:border-[#111111] transition-colors">
+                    <span class="group-hover:translate-x-1 transition-transform duration-300">→ SUBSCRIBE RSS</span>
+                    <span class="text-neutral-400 group-hover:text-[#111111]">[RSS]</span>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex w-full border-t border-[#111111] h-10 md:h-12 items-center justify-between px-4 md:px-6 text-[10px] font-mono text-neutral-400 bg-white shrink-0">
+        <div>© 2026 WORTH.EE LIGHT PROTOCOL.</div>
+        <div class="hidden md:block tracking-widest">ANTI-CONVENTIONAL STRUCTURE</div>
+        <div class="text-neutral-800 hover:underline cursor-pointer" onclick="window.scrollTo({top:0,behavior:'smooth'})">▲ TOP</div>
+    </div>
+
+</div>
+
+<script>
+// ── 时钟 ─────────────────────────────────────────────────
+(function tick() {
+    document.getElementById('clock').textContent = new Date().toTimeString().split(' ')[0];
+    setTimeout(tick, 1000);
+})();
+
+// ── 文章阅读（fetch HTML，抽取 .article-body） ────────────
+const leftPanel    = document.getElementById('leftPanel');
+const centerPanel  = document.getElementById('centerPanel');
+const manifestoView = document.getElementById('manifestoView');
+const tocView      = document.getElementById('tocView');
+const listView     = document.getElementById('listView');
+const articleView  = document.getElementById('articleView');
+
+const isMobile = () => window.innerWidth <= 768;
+
+function openArticle(url, title, date, category, index) {
+    // 填充 header 信息
+    document.getElementById('articleTag').textContent =
+        '[' + String(index).padStart(2,'0') + ' / ' + (category||'POST') + ']';
+    document.getElementById('articleDate').textContent = date;
+    document.getElementById('articleTitle').textContent = title;
+    document.getElementById('articleBody').innerHTML =
+        '<span style="color:#aaa;font-size:11px;font-family:monospace">LOADING...</span>';
+
+    // 高亮目录
+    document.querySelectorAll('.toc-item').forEach(el => {
+        el.classList.toggle('active-toc', el.dataset.url === url);
+    });
+
+    // fetch 文章页面，提取正文
+    fetch(url)
+        .then(r => r.text())
+        .then(html => {
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            // 取 article-body 里的内容（文章单独页也用 base.njk，正文在 #articleBody）
+            const body = doc.getElementById('articleBody');
+            document.getElementById('articleBody').innerHTML =
+                body ? body.innerHTML : '<p style="color:#aaa">内容加载失败</p>';
+        })
+        .catch(() => {
+            document.getElementById('articleBody').innerHTML =
+                '<p style="color:#aaa">内容加载失败</p>';
+        });
+
+    if (!isMobile()) {
+        // 桌面：收窄左侧，放宽中间
+        manifestoView.classList.add('hidden-view');
+        tocView.classList.add('active');
+        leftPanel.style.cssText  = 'width:14%;min-width:14%;max-width:14%';
+        articleView.classList.add('active');
+        listView.classList.add('hidden-view');
+        centerPanel.style.cssText = 'width:64%;min-width:64%;max-width:64%';
+    } else {
+        // 手机：列表隐藏，文章显示（左侧始终显示）
+        listView.classList.add('hidden-view');
+        articleView.classList.add('active');
+    }
+}
+
+function closeArticle() {
+    tocView.classList.remove('active');
+    manifestoView.classList.remove('hidden-view');
+    leftPanel.style.cssText = '';
+    articleView.classList.remove('active');
+    listView.classList.remove('hidden-view');
+    centerPanel.style.cssText = '';
+}
+
+// 文章列表点击
+document.querySelectorAll('.cargo-item[data-url]').forEach(el => {
+    el.addEventListener('click', () => {
+        openArticle(el.dataset.url, el.dataset.title, el.dataset.date,
+                    el.dataset.category, el.dataset.index);
+    });
+});
+
+// 目录点击
+document.querySelectorAll('.toc-item[data-url]').forEach(el => {
+    el.addEventListener('click', () => {
+        // 找到对应的 cargo-item 拿数据
+        const match = document.querySelector(`.cargo-item[data-url="${el.dataset.url}"]`);
+        if (match) openArticle(match.dataset.url, match.dataset.title,
+                               match.dataset.date, match.dataset.category, match.dataset.index);
+    });
+});
+
+document.getElementById('backToList').addEventListener('click', closeArticle);
+document.getElementById('backToManifesto').addEventListener('click', closeArticle);
+
+// ── Canvas 划线（桌面） ───────────────────────────────────
+const canvas = document.getElementById('drawCanvas');
+if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let lines = [], lastPos = null;
+
+    function resizeCanvas() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width; canvas.height = rect.height;
+        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    }
+
+    canvas.parentElement.addEventListener('mousemove', e => {
+        const rect = canvas.getBoundingClientRect();
+        const cur = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        if (lastPos) lines.push({ from: lastPos, to: cur, alpha: 1.0 });
+        lastPos = cur;
+    });
+    canvas.parentElement.addEventListener('mouseleave', () => { lastPos = null; });
+
+    function renderLoop() {
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        for (let i = lines.length - 1; i >= 0; i--) {
+            const l = lines[i];
+            ctx.strokeStyle = `rgba(17,17,17,${l.alpha})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(l.from.x, l.from.y); ctx.lineTo(l.to.x, l.to.y); ctx.stroke();
+            l.alpha -= 0.008;
+            if (l.alpha <= 0) lines.splice(i, 1);
+        }
+        requestAnimationFrame(renderLoop);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    renderLoop();
+}
+</script>
+</body>
+</html>
