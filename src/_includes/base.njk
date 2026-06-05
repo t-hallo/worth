@@ -64,7 +64,7 @@
         .article-body a:hover { border-color:#111; }
 
         /* manifesto 段落不留空行 */
-        #manifestoView p { margin: 0; }
+        #manifestoView p { margin: 0 !important; }
 
         /* ── RSS Toast ── */
         #rssToast {
@@ -173,11 +173,11 @@
             #allArticles { position: absolute; visibility: hidden; pointer-events: none; }
 
             /* manifesto 和文章正文段落去掉多余空行 */
-            #manifestoView p { margin: 0; line-height: 1.7; }
+            #manifestoView p { margin: 0 !important; line-height: 1.7; }
             .article-body p { margin-bottom: 0.6rem; }
 
             /* manifesto 段落去掉空行 */
-            #manifestoView p { margin: 0; line-height: 1.7; }
+            #manifestoView p { margin: 0 !important; line-height: 1.7; }
 
             /* footer */
             #siteFooter { height: 44px !important; }
@@ -209,16 +209,14 @@
             <div id="manifestoView" class="p-5 md:p-6 flex flex-col justify-between h-full">
                 <div class="text-[10px] font-mono text-neutral-400 tracking-widest shrink-0">[01 // MANIFESTO]</div>
                 <div class="flex-1 overflow-y-auto no-scrollbar text-xs font-bold tracking-wider leading-relaxed break-all flex flex-col mt-3">
-                    <div class="text-neutral-400 hover:text-neutral-600 transition-colors duration-500 cursor-default">
-                        <p>花園裡邊明晃晃的，紅的紅，綠的綠，新鮮漂亮。</p>
-                        <p>花開了，開了，就像睡醒了似的。鳥飛了，就像在天上逛似的。蟲子叫了，就像蟲子在說話似的。</p>
-                        <p>一切都活了，都有無限的本领，要做什麼，就做什麼。要怎麼樣，就怎麼樣，都是自由的。</p>
-                    </div>
-                    <div class="text-[#111] mt-3">
-                        <p>倭瓜願意爬上房就爬上房，願意爬上樹就爬上樹。</p>
-                        <p>黃瓜願意開一個謊花，就開一個謊花，願意結一個黃瓜，就結一個黃瓜。若都不願意，職是一個黃瓜也不結，一朵花也不開，也沒有人問它。</p>
-                        <p>玉米願意長多高就長多高，他若願意長到天上去，也沒有人管他。</p>
-                        <p>蝴蝶飛得那麼快，大紅蝴蝶滿天飛，白蝴蝶隨風滾，要是追一只蝴蝶，那蝴蝶飛上了天，像同太陽在一起了似的，那便是追不上了。</p>
+                    <div>
+                        <p class="text-neutral-400">花園裡邊明晃晃的，紅的紅，綠的綠，新鮮漂亮。</p>
+                        <p class="text-neutral-400">花開了，開了，就像睡醒了似的。鳥飛了，就像在天上逛似的。蟲子叫了，就像蟲子在說話似的。</p>
+                        <p class="text-neutral-400">一切都活了，都有無限的本领，要做什麼，就做什麼。要怎麼樣，就怎麼樣，都是自由的。</p>
+                        <p class="text-[#111]">倭瓜願意爬上房就爬上房，願意爬上樹就爬上樹。</p>
+                        <p class="text-[#111]">黃瓜願意開一個黄花，就開一個黄花，願意結一個黃瓜，就結一個黃瓜。若都不願意，職是一個黃瓜也不結，一朵花也不開，也沒有人問它。</p>
+                        <p class="text-[#111]">玉米願意長多高就長多高，他若願意長到天上去，也沒有人管他。</p>
+                        <p class="text-[#111]">蝴蝶飛得那麼快，大紅蝴蝶滿天飛，白蝴蝶隨風滾，要是追一只蝴蝶，那蝴蝶飛上了天，像同太陽在一起了似的，那便是追不上了。</p>
                     </div>
                     <div class="flex-1 min-h-[40px]"></div>
                 </div>
