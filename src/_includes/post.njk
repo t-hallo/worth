@@ -11,24 +11,23 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* 核心布局：居中悬浮档案框 */
+        /* 整体居中悬浮档案框 */
         body { background-color: #f7f7f7; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
         #outerWrap {
-            width: 90%; max-width: 650px; height: 85vh;
-            border: 1px solid #111; display: flex; flex-direction: column;
+            width: 90%; max-width: 900px; height: 85vh;
+            border: 1px solid #111; display: flex; flex-direction: row;
             background: white; overflow: hidden;
         }
 
-        /* 移动端适配 */
+        /* 移动端适配：取消分栏 */
         @media (max-width: 768px) {
             body { padding: 0; }
-            #outerWrap { width: 100%; height: 100vh; border: none; }
+            #outerWrap { width: 100%; height: 100vh; border: none; flex-direction: column; }
+            #sidebar { display: none; }
         }
 
-        /* 内容排版 */
-        .article-body { font-size: 0.95rem; line-height: 1.85; color: #111111; font-weight: 400; }
+        .article-body { font-size: 0.95rem; line-height: 1.8; color: #111111; }
         .article-body p { margin-bottom: 1.5rem; }
-        .article-body h2 { font-family: 'Syne', sans-serif; font-size: 1.2rem; margin: 2rem 0 1rem; }
         .article-body a { text-decoration: underline; text-underline-offset: 4px; }
         .article-body a:hover { color: #d00; }
     </style>
@@ -36,50 +35,43 @@
 <body class="selection:bg-[#111] selection:text-white overflow-hidden">
 
 <div id="outerWrap">
-    <header class="flex w-full border-b border-[#111] h-14 items-center justify-between px-6 shrink-0 bg-white">
-        <div class="font-syne text-lg tracking-tighter flex items-center gap-2">
-            <a href="/" class="font-black no-underline text-[#111]">WORTH.EE</a>
-            <span class="text-[9px] bg-[#111] text-white px-1.5 py-0.5 font-mono">// ARCHIVE</span>
+    <aside id="sidebar" class="w-[220px] border-r border-[#111] p-6 flex flex-col shrink-0 bg-white">
+        <div class="font-syne text-lg font-black mb-8">WORTH.EE</div>
+        <div class="text-[9px] font-mono text-neutral-400 mb-6 tracking-widest">[INDEX]</div>
+        <div class="flex flex-col gap-3 font-mono text-[10px]">
+            {% for post in collections.posts %}
+            <a href="{{ post.url }}" class="{% if page.url == post.url %}text-[#111] font-bold{% else %}text-neutral-400 hover:text-[#111]{% endif %} no-underline">
+                {{ loop.index | idx }} // {{ post.data.title | truncate(18) }}
+            </a>
+            {% endfor %}
         </div>
-        <div class="font-mono text-[10px] tracking-widest text-neutral-400" id="clock">00:00:00</div>
-    </header>
-
-    <main class="flex-1 overflow-y-auto no-scrollbar bg-white">
-        <div class="max-w-[500px] mx-auto px-6 py-12">
-            <div class="text-[9px] font-mono text-neutral-400 tracking-widest mb-8 flex gap-4">
-                <span>[{{ category or "00 // METADATA" }}]</span>
-                <span>{{ date | date("yyyy.MM.dd") }}</span>
-            </div>
-
-            <h1 class="font-syne text-3xl font-black tracking-tighter leading-[1] mb-12 text-[#111]">
-                {{ title }}
-            </h1>
-
-            <div class="article-body">
-                {{ content | safe }}
-            </div>
-
-            <nav class="mt-20 pt-8 border-t border-[#111] grid grid-cols-2 gap-8">
-                {% if prevPost %}
-                <a href="{{ prevPost.url }}" class="block no-underline text-[#111]">
-                    <div class="text-[9px] font-mono text-neutral-400 mb-2">← PREV</div>
-                    <div class="text-[11px] font-bold hover:underline">{{ prevPost.data.title | truncate(20) }}</div>
-                </a>
-                {% endif %}
-                {% if nextPost %}
-                <a href="{{ nextPost.url }}" class="block no-underline text-[#111] text-right">
-                    <div class="text-[9px] font-mono text-neutral-400 mb-2">NEXT →</div>
-                    <div class="text-[11px] font-bold hover:underline">{{ nextPost.data.title | truncate(20) }}</div>
-                </a>
-                {% endif %}
-            </nav>
+        <div class="mt-auto text-[9px] font-mono text-neutral-400 pt-6 border-t border-[#111]">
+            STATUS: PERSISTENT
         </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col overflow-hidden bg-white">
+        <header class="flex w-full border-b border-[#111] h-14 items-center justify-between px-6 shrink-0">
+            <div class="text-[9px] font-mono text-neutral-400">[{{ category or "POST" }}]</div>
+            <div class="font-mono text-[10px] text-neutral-400" id="clock">00:00:00</div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto no-scrollbar p-10">
+            <div class="max-w-[500px]">
+                <h1 class="font-syne text-4xl font-black tracking-tight leading-[0.95] mb-10 text-[#111]">
+                    {{ title }}
+                </h1>
+                <div class="article-body">
+                    {{ content | safe }}
+                </div>
+            </div>
+        </div>
+
+        <footer class="h-10 border-t border-[#111] flex items-center px-6 text-[9px] font-mono text-neutral-400 justify-between">
+            <div>{{ date | date("yyyy.MM.dd") }}</div>
+            <a href="/" class="text-[#111] hover:underline no-underline">[▲ RETURN TO INDEX]</a>
+        </footer>
     </main>
-
-    <footer class="flex w-full border-t border-[#111] h-10 items-center justify-between px-6 text-[9px] font-mono text-neutral-400 bg-white shrink-0">
-        <div>© 2026 WORTH.EE</div>
-        <a href="/" class="text-[#111] hover:underline no-underline">[▲ INDEX]</a>
-    </footer>
 </div>
 
 <script>
