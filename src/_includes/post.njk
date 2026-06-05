@@ -7,68 +7,56 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Syne:wght@800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f7f7f7; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: #f7f7f7; min-height: 100vh; margin: 0; }
         .font-syne { font-family: 'Syne', sans-serif; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
         #outerWrap {
-            width: 95%; max-width: 850px; height: 90vh;
+            width: 95%; max-width: 850px; height: 90vh; margin: 5vh auto;
             border: 1px solid #111; display: flex; flex-direction: row;
             background: white; overflow: hidden;
         }
+
+        /* 移动端深度适配 */
         @media (max-width: 768px) {
-        body { 
-            display: block; /* 取消居中对齐 */
-            padding: 0; 
-            overflow-y: auto; /* 允许整页滚动 */
+            body { overflow-y: auto; display: block; padding: 0; }
+            #outerWrap { width: 100%; height: auto; margin: 0; border: none; flex-direction: column; }
+            #sidebar { display: none; }
+            /* 手机端正文区域填满 */
+            main { min-height: 100vh; padding-bottom: 40px; }
+            .article-body { font-size: 1rem; line-height: 1.7; }
         }
-        #outerWrap {
-            width: 100% !important;
-            height: auto !important; /* 不再限制高度，随内容撑开 */
-            border: none !important;
-            display: block; /* 改为堆叠布局 */
-        }
-        #sidebar { 
-            display: none !important; /* 彻底移除侧边栏 */
-        }
-        main {
-            padding: 20px 15px !important;
-            min-height: 100vh;
-        }
-        h1 { font-size: 1.8rem !important; } /* 手机上标题稍微小一点，避免换行太尴尬 */
-    }
+
+        .article-body { font-size: 0.95rem; line-height: 1.6; color: #111; letter-spacing: -0.01em; }
+        .article-body p { margin-bottom: 1rem; }
     </style>
 </head>
-<body class="selection:bg-[#111] selection:text-white overflow-hidden">
+<body class="selection:bg-[#111] selection:text-white">
+
 <div id="outerWrap">
-<!-- 修改后的 Sidebar -->
-<aside id="sidebar" class="w-[220px] border-r border-[#111] p-6 flex flex-col shrink-0 bg-white">
-    <!-- 将标题改小，字间距拉大，与 INDEX 形成统一的系统头部 -->
-    <a href="/" class="font-syne text-[10px] font-black tracking-[0.2em] mb-8 text-[#111] no-underline block uppercase">
-        WORTH.EE
-    </a>
-    
-    <div class="text-[9px] font-mono text-neutral-400 mb-6 tracking-[0.2em] uppercase border-b border-[#111] pb-2">
-        [INDEX_FILE]
-    </div>
-    
-    <div class="flex flex-col gap-4 font-mono">
-        {% for post in collections.posts %}
-        <a href="{{ post.url }}" class="nav-item text-[10px] leading-tight {% if page.url == post.url %}text-[#111] font-bold{% else %}text-neutral-400 hover:text-[#111]{% endif %} no-underline flex flex-col gap-1">
-            <span class="opacity-60">{{ loop.index | idx }}</span>
-            <span>{{ post.data.title | truncate(20) }}</span>
-        </a>
-        {% endfor %}
-    </div>
-</aside>
-    <main class="flex-1 flex flex-col overflow-hidden">
+    <aside id="sidebar" class="w-[220px] border-r border-[#111] p-6 flex flex-col shrink-0 bg-white">
+        <a href="/" class="font-syne text-[10px] font-black tracking-[0.2em] mb-8 text-[#111] no-underline block uppercase">WORTH.EE</a>
+        <div class="text-[9px] font-mono text-neutral-400 mb-6 tracking-[0.2em] uppercase border-b border-[#111] pb-2">[INDEX_FILE]</div>
+        <div class="flex flex-col gap-4 font-mono">
+            {% for post in collections.posts %}
+            <a href="{{ post.url }}" class="nav-item text-[10px] leading-tight {% if page.url == post.url %}text-[#111] font-bold{% else %}text-neutral-400 hover:text-[#111]{% endif %} no-underline flex flex-col gap-1">
+                <span class="opacity-60">{{ loop.index | idx }}</span>
+                <span>{{ post.data.title | truncate(20) }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col overflow-hidden bg-white">
         <header class="flex w-full border-b border-[#111] h-10 items-center justify-between px-5 shrink-0 text-[8px] font-mono text-neutral-400">
-            <div>[{{ category or "POST" }}]</div>
+            <a href="/" class="md:hidden text-[#111] font-bold uppercase no-underline">← INDEX</a>
+            <div class="hidden md:block">[{{ category or "POST" }}]</div>
             <div id="clock">00:00:00</div>
         </header>
-        <div class="flex-1 overflow-y-auto no-scrollbar p-6">
-            <div class="w-full">
-                <h1 class="font-syne text-3xl font-black tracking-tight leading-[0.9] mb-6 text-[#111]">
+
+        <div class="flex-1 overflow-y-auto no-scrollbar p-6 md:p-10">
+            <div class="w-full max-w-[500px]">
+                <h1 class="font-syne text-3xl font-black tracking-tight leading-[0.9] mb-8 text-[#111]">
                     {{ title }}
                 </h1>
                 <div class="article-body">
@@ -76,12 +64,14 @@
                 </div>
             </div>
         </div>
+
         <footer class="h-8 border-t border-[#111] flex items-center px-5 text-[8px] font-mono text-neutral-400 justify-between">
             <div>{{ date | date("yyyy.MM.dd") }}</div>
             <a href="/" class="text-[#111] hover:underline no-underline uppercase tracking-widest">[▲ INDEX]</a>
         </footer>
     </main>
 </div>
+
 <script>
     function updateClock() {
         document.getElementById('clock').textContent = new Date().toTimeString().split(' ')[0];
