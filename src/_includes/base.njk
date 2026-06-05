@@ -236,10 +236,10 @@
                 </div>
                 <div class="flex-1 overflow-y-auto no-scrollbar flex flex-col gap-1 min-h-0">
                     {% for post in collections.posts %}
-                    <div class="toc-item py-2 border-b border-dotted border-neutral-200" data-index="{{ loop.index }}">
+                    <a href="{{ post.url }}" class="toc-item block py-2 border-b border-dotted border-neutral-200 no-underline text-inherit">
                         <div class="text-[9px] font-mono text-neutral-400 mb-1">[{{ loop.index | idx }}] {{ post.date | date("yyyy.MM.dd") }}</div>
                         <div class="text-xs font-bold text-neutral-800 leading-snug">{{ post.data.title | truncate(28) }}</div>
-                    </div>
+                    </a>
                     {% endfor %}
                 </div>
             </div>
@@ -257,7 +257,7 @@
                 </div>
                 <div class="overflow-y-auto no-scrollbar divide-y divide-[#111]" style="flex:1;min-height:0;">
                     {% for post in collections.posts %}
-                    <div class="p-5 md:p-6 cargo-item" data-index="{{ loop.index }}">
+                    <a href="{{ post.url }}" class="p-5 md:p-6 cargo-item block no-underline text-inherit">
                         <div class="flex justify-between text-[10px] font-mono text-neutral-400 mb-2">
                             <span>[{{ loop.index | idx }} / {{ post.data.category }}]</span>
                             <span>{{ post.date | date("yyyy.MM.dd") }}</span>
@@ -266,17 +266,11 @@
                         {% if post.data.excerpt %}
                         <p class="text-xs text-neutral-400 mt-2 font-mono leading-relaxed">{{ post.data.excerpt }}</p>
                         {% endif %}
-                    </div>
+                    </a>
                     {% endfor %}
                 </div>
             </div>
 
-            <!-- 文章阅读 -->
-            <div id="articleView">
-                <div class="p-4 border-b border-[#111] text-[10px] font-mono text-neutral-400 flex justify-between bg-[#fafafa] shrink-0">
-                    <span id="articleTag"></span>
-                    <span class="back-btn" id="backToList">← BACK</span>
-                </div>
                 <div class="overflow-y-auto no-scrollbar p-6 md:p-8" style="flex:1;min-height:0;">
                     <div id="articleDate" class="text-[10px] font-mono text-neutral-400 mb-3"></div>
                     <h1 id="articleTitle" class="text-xl md:text-2xl font-bold tracking-tight text-neutral-900 mb-6 leading-tight"></h1>
@@ -284,13 +278,6 @@
                 </div>
             </div>
 
-            <!-- 预渲染内容（JS 读取，不占位） -->
-            <div id="allArticles" style="display:none">
-                {% for post in collections.posts %}
-                <div data-article="{{ loop.index }}"
-                     data-title="{{ post.data.title }}"
-                     data-date="{{ post.date | date('yyyy.MM.dd') }}"
-                     data-category="{{ post.data.category or 'POST' }}">{{ post.templateContent | safe }}</div>
                 {% endfor %}
             </div>
 
