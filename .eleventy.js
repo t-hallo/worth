@@ -3,10 +3,13 @@ const pluginRss = require("@11ty/eleventy-plugin-rss");
 module.exports = function(eleventyConfig) {
   eleventyConfig.addPlugin(pluginRss);
 
-  // 数字补零：{{ loop.index | idx }} → "01", "02"...
+  // 把编译好的 CSS 复制到 _site
+  eleventyConfig.addPassthroughCopy("src/css/dist.css");
+
+  // 数字补零
   eleventyConfig.addFilter("idx", (val) => String(val).padStart(2, "0"));
 
-  // 日期格式化：{{ post.date | date("yyyy.MM.dd") }}
+  // 日期格式化
   eleventyConfig.addFilter("date", (val, format) => {
     const d = new Date(val);
     const yyyy = d.getFullYear();
@@ -21,7 +24,7 @@ module.exports = function(eleventyConfig) {
     str && str.length > len ? str.slice(0, len) + "…" : str
   );
 
-  // 按日期倒序排列文章
+  // 按日期倒序
   eleventyConfig.addCollection("posts", function(collectionApi) {
     return collectionApi.getFilteredByTag("post").sort((a, b) => b.date - a.date);
   });
