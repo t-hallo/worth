@@ -26,92 +26,45 @@
         @media (min-width: 769px) {
             body { overflow: hidden; height: 100vh; }
             #outerWrap { height: calc(100vh - 3rem); }
-            #postBody { height: 0; flex: 1; }
         }
 
-        /* 文章正文排版 */
-        .article-body { font-size: .92rem; line-height: 2; color: #222; }
+        /* 文章正文 */
+        .article-body { font-size: .9rem; line-height: 2; color: #222; }
         .article-body p { margin-bottom: 1.2rem; }
         .article-body h2 {
-            font-size: .68rem;
+            font-size: .65rem;
             font-family: 'Space Grotesk', monospace;
-            letter-spacing: .14em;
-            color: #bbb;
+            letter-spacing: .16em;
+            color: #999;
             margin-top: 3rem;
             margin-bottom: .75rem;
             font-weight: 500;
             text-transform: uppercase;
         }
-        .article-body h3 {
-            font-size: .85rem;
-            font-weight: 700;
-            margin-top: 2rem;
-            margin-bottom: .5rem;
-        }
-        .article-body ul, .article-body ol {
-            padding: 0;
-            margin-bottom: 1.2rem;
-            list-style: none;
-        }
-        .article-body ul li, .article-body ol li {
-            padding-left: 1.2rem;
-            position: relative;
-            margin-bottom: .4rem;
-        }
-        .article-body ul li::before { content: "—"; position: absolute; left: 0; color: #ccc; }
+        .article-body h3 { font-size: .88rem; font-weight: 700; margin-top: 2rem; margin-bottom: .5rem; }
+        .article-body ul, .article-body ol { padding: 0; margin-bottom: 1.2rem; list-style: none; }
+        .article-body ul li, .article-body ol li { padding-left: 1.25rem; position: relative; margin-bottom: .4rem; }
+        .article-body ul li::before { content: "—"; position: absolute; left: 0; color: #bbb; }
         .article-body ol { counter-reset: item; }
-        .article-body ol li::before {
-            content: counter(item) ".";
-            counter-increment: item;
-            position: absolute; left: 0; color: #ccc;
-            font-size: .75rem; font-family: monospace;
-        }
-        .article-body a { border-bottom: 1px solid #e0e0e0; text-decoration: none; color: inherit; }
+        .article-body ol li::before { content: counter(item) "."; counter-increment: item; position: absolute; left: 0; color: #bbb; font-size: .75rem; font-family: monospace; }
+        .article-body a { border-bottom: 1px solid #ddd; text-decoration: none; color: inherit; }
         .article-body a:hover { border-color: #111; }
-        .article-body blockquote {
-            border-left: 1px solid #111;
-            margin: 2rem 0;
-            padding: .5rem 0 .5rem 1.5rem;
-            color: #555;
-        }
-        .article-body code {
-            font-family: monospace;
-            font-size: .82rem;
-            background: #f4f4f4;
-            padding: 1px 5px;
-            letter-spacing: 0;
-        }
-        .article-body pre {
-            background: #f4f4f4;
-            padding: 1rem 1.25rem;
-            margin-bottom: 1.2rem;
-            overflow-x: auto;
-            font-size: .8rem;
-            line-height: 1.6;
-        }
+        .article-body blockquote { border-left: 1px solid #111; margin: 2rem 0; padding: .5rem 0 .5rem 1.5rem; color: #555; }
+        .article-body code { font-family: monospace; font-size: .82rem; background: #f4f4f4; padding: 1px 5px; }
+        .article-body pre { background: #f4f4f4; padding: 1rem 1.25rem; margin-bottom: 1.2rem; overflow-x: auto; font-size: .8rem; line-height: 1.6; }
         .article-body pre code { background: none; padding: 0; }
-        .article-body hr {
-            border: none;
-            border-top: 1px solid #e0e0e0;
-            margin: 2.5rem 0;
-        }
+        .article-body hr { border: none; border-top: 1px dotted #ddd; margin: 2.5rem 0; }
 
         /* 手机适配 */
         @media (max-width: 768px) {
             body { padding: 0; overflow-y: auto; }
             #outerWrap { border: none !important; height: auto !important; min-height: 100dvh; }
             #siteHeader { height: 52px !important; padding: 0 1rem !important; }
-            #postBody { flex-direction: column !important; height: auto !important; overflow: visible !important; }
-            #tocPanel { display: none !important; }
-            #articlePanel {
-                width: 100% !important; max-width: 100% !important;
-                border-right: none !important;
-                height: auto !important; overflow: visible !important;
-            }
-            #articlePanel .no-scrollbar { overflow: visible !important; height: auto !important; }
-            #articlePanel .max-w-xl { padding: 2rem 1.25rem !important; }
+            #postScroll { overflow: visible !important; height: auto !important; }
+            .post-inner { padding: 2rem 1.25rem 3rem !important; }
             .article-body { font-size: .97rem; }
             #siteFooter { height: 44px !important; }
+            #siteFooter .md\:block { display: none !important; }
         }
     </style>
 </head>
@@ -123,114 +76,87 @@
     <div id="siteHeader" class="flex w-full border-b border-[#111] h-14 md:h-16 items-center justify-between px-4 md:px-6 bg-white shrink-0 z-10">
         <div class="font-syne text-lg md:text-xl tracking-tighter flex items-center gap-2">
             <a href="/" class="font-black no-underline text-inherit tracking-tight">WORTH.EE</a>
-            <span class="text-[9px] bg-[#111] text-white px-2 py-0.5 font-mono">[STATUS: LIVE]</span>
+            <span class="text-[9px] bg-[#111] text-white px-2 py-0.5 font-mono">// ARCHIVE</span>
         </div>
-        <div class="text-[10px] font-mono text-neutral-400 hidden lg:block tracking-wider">{{ site.location }}</div>
-        <div class="font-mono text-xs tracking-widest text-neutral-800" id="clock">00:00:00</div>
+        <div class="text-[10px] font-mono text-neutral-400 hidden lg:block tracking-wider">
+            {% for post in collections.posts %}{% if page.url == post.url %}PAGE:{{ loop.index | idx }}{% endif %}{% endfor %}
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="font-mono text-xs tracking-widest text-neutral-800" id="clock">00:00:00</div>
+            <a href="/" class="font-mono text-[10px] tracking-widest text-neutral-400 hover:text-[#111] transition-colors no-underline hidden md:block">[BACK ←]</a>
+        </div>
     </div>
 
-    <!-- 主体 -->
-    <div id="postBody" class="flex flex-row w-full overflow-hidden" style="flex:1;min-height:0;">
+    <!-- 文章区：单栏居中 -->
+    <div id="postScroll" class="overflow-y-auto no-scrollbar" style="flex:1;min-height:0;">
+        <div class="post-inner max-w-2xl mx-auto px-8 md:px-0 py-12 md:py-16">
 
-        <!-- 左侧目录栏 -->
-        <div id="tocPanel" class="w-[22%] max-w-[22%] min-w-[22%] border-r border-[#111] flex flex-col bg-[#fafafa] overflow-hidden">
-            <div class="p-4 border-b border-[#111] text-[10px] font-mono text-neutral-400 flex items-center justify-between shrink-0">
-                <span>[INDEX]</span>
-                <a href="/" class="hover:text-[#111] transition-colors no-underline text-neutral-400 tracking-wider">← BACK</a>
-            </div>
-            <div class="flex-1 overflow-y-auto no-scrollbar min-h-0">
-                {% for post in collections.posts %}
-                <a href="{{ post.url }}"
-                   class="flex flex-col p-4 border-b border-dotted border-neutral-200 no-underline text-inherit transition-colors hover:bg-white {% if page.url == post.url %}bg-white{% endif %}">
-                    {% if page.url == post.url %}
-                    <div class="w-full h-px bg-[#111] mb-3"></div>
-                    {% endif %}
-                    <div class="text-[9px] font-mono text-neutral-400 mb-1">[{{ loop.index | idx }}] {{ post.date | date("yyyy.MM.dd") }}</div>
-                    <div class="text-xs font-bold leading-snug {% if page.url == post.url %}text-[#111]{% else %}text-neutral-500{% endif %}">
-                        {{ post.data.title | truncate(32) }}
-                    </div>
-                </a>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- 中间文章正文 -->
-        <div id="articlePanel" class="flex-1 border-r border-[#111] flex flex-col overflow-hidden bg-white">
-
-            <!-- 文章 meta 条 -->
-            <div class="p-4 border-b border-[#111] text-[10px] font-mono text-neutral-400 flex justify-between bg-[#fafafa] shrink-0">
-                <span>[{{ category or "POST" }}]</span>
+            <!-- 文章标签行 -->
+            <div class="text-[10px] font-mono text-neutral-400 tracking-widest mb-6 flex items-center gap-4">
+                <span>[{{ loop.index | idx if loop else "—" }} // {{ category or "POST" }}]</span>
+                <span class="text-neutral-300">—</span>
                 <span>{{ date | date("yyyy.MM.dd") }}</span>
             </div>
 
-            <!-- 正文滚动区 -->
-            <div class="overflow-y-auto no-scrollbar" style="flex:1;min-height:0;">
-                <div class="max-w-xl mx-auto px-8 md:px-14 py-12 md:py-16">
+            <!-- 标题 -->
+            <h1 class="font-syne text-2xl md:text-4xl font-black tracking-tight text-[#111] mb-4 leading-tight">
+                {{ title }}
+            </h1>
 
-                    <!-- 标题 -->
-                    <h1 class="font-syne text-2xl md:text-3xl font-black tracking-tight text-neutral-900 mb-10 leading-tight">
-                        {{ title }}
-                    </h1>
+            <!-- 分隔线 -->
+            <div class="border-t border-[#111] mt-8 mb-10"></div>
 
-                    <!-- 正文 -->
-                    <div class="article-body">
-                        {{ content | safe }}
+            <!-- 正文 -->
+            <div class="article-body">
+                {{ content | safe }}
+            </div>
+
+            <!-- 底部分隔 + 导航 -->
+            <div class="border-t border-dotted border-neutral-300 mt-16 pt-8">
+                <div class="grid grid-cols-2 gap-8 text-[10px] font-mono">
+                    <div>
+                        {% if prevPost %}
+                        <div class="text-neutral-400 mb-2 tracking-wider">← PREV</div>
+                        <a href="{{ prevPost.url }}" class="text-neutral-600 hover:text-[#111] transition-colors no-underline leading-relaxed block text-xs font-bold">
+                            {{ prevPost.data.title | truncate(40) }}
+                        </a>
+                        {% endif %}
                     </div>
-
-                    <!-- 上一篇 / 下一篇 -->
-                    <div class="mt-16 pt-8 border-t border-[#111] grid grid-cols-2 gap-4 text-[10px] font-mono">
-                        <div>
-                            {% if prevPost %}
-                            <div class="text-neutral-400 mb-1">PREV</div>
-                            <a href="{{ prevPost.url }}" class="text-neutral-700 hover:text-[#111] transition-colors no-underline leading-snug block">
-                                ← {{ prevPost.data.title | truncate(32) }}
-                            </a>
-                            {% endif %}
-                        </div>
-                        <div class="text-right">
-                            {% if nextPost %}
-                            <div class="text-neutral-400 mb-1">NEXT</div>
-                            <a href="{{ nextPost.url }}" class="text-neutral-700 hover:text-[#111] transition-colors no-underline leading-snug block">
-                                {{ nextPost.data.title | truncate(32) }} →
-                            </a>
-                            {% endif %}
-                        </div>
+                    <div class="text-right">
+                        {% if nextPost %}
+                        <div class="text-neutral-400 mb-2 tracking-wider">NEXT →</div>
+                        <a href="{{ nextPost.url }}" class="text-neutral-600 hover:text-[#111] transition-colors no-underline leading-relaxed block text-xs font-bold">
+                            {{ nextPost.data.title | truncate(40) }}
+                        </a>
+                        {% endif %}
                     </div>
-
                 </div>
             </div>
-        </div>
 
-        <!-- 右侧空白装饰栏 -->
-        <div class="w-[18%] max-w-[18%] min-w-[18%] flex flex-col justify-between bg-[#fafafa] overflow-hidden">
-            <div class="flex-1 p-6 flex flex-col gap-6">
-                <!-- 文章序号大字 -->
-                <div class="font-syne text-[80px] md:text-[100px] font-black text-neutral-100 leading-none select-none">
+            <!-- 所有文章列表（折叠在底部） -->
+            <div class="mt-16 border-t border-[#111] pt-6">
+                <div class="text-[10px] font-mono text-neutral-400 tracking-widest mb-4">[ALL POSTS]</div>
+                <div class="flex flex-col divide-y divide-dotted divide-neutral-200">
                     {% for post in collections.posts %}
-                        {% if page.url == post.url %}{{ loop.index | idx }}{% endif %}
+                    <a href="{{ post.url }}"
+                       class="py-3 flex justify-between items-baseline no-underline text-inherit hover:pl-3 transition-all duration-300 {% if page.url == post.url %}pl-3 border-l-2 border-[#111]{% endif %}">
+                        <span class="text-xs font-bold {% if page.url == post.url %}text-[#111]{% else %}text-neutral-500{% endif %}">
+                            {{ post.data.title }}
+                        </span>
+                        <span class="text-[9px] font-mono text-neutral-400 shrink-0 ml-4">{{ post.date | date("yyyy.MM.dd") }}</span>
+                    </a>
                     {% endfor %}
                 </div>
             </div>
-            <div class="p-5 flex flex-col gap-2.5 font-mono text-xs border-t border-[#111] shrink-0">
-                <div class="text-neutral-400 text-[10px] mb-1 tracking-wider">[SIGNAL]</div>
-                <a href="mailto:{{ site.email }}" class="group flex justify-between items-center py-1 border-b border-dotted border-neutral-200 hover:border-[#111] transition-colors no-underline text-inherit">
-                    <span class="group-hover:translate-x-1 transition-transform duration-300">→ MAIL</span>
-                    <span class="text-neutral-400 group-hover:text-[#111]">[→]</span>
-                </a>
-                <a href="/feed.xml" class="group flex justify-between items-center py-1 border-b border-dotted border-neutral-200 hover:border-[#111] transition-colors no-underline text-inherit">
-                    <span class="group-hover:translate-x-1 transition-transform duration-300">→ RSS</span>
-                    <span class="text-neutral-400 group-hover:text-[#111]">[→]</span>
-                </a>
-            </div>
-        </div>
 
+        </div>
     </div>
 
     <!-- Footer -->
     <div id="siteFooter" class="flex w-full border-t border-[#111] h-10 md:h-12 items-center justify-between px-4 md:px-6 text-[10px] font-mono text-neutral-400 bg-white shrink-0">
         <div>© 2026 WORTH.EE LIGHT PROTOCOL.</div>
-        <div class="hidden md:block tracking-widest">ANTI-CONVENTIONAL STRUCTURE</div>
-        <a href="/" class="text-neutral-800 hover:underline no-underline">← INDEX</a>
+        <div class="hidden md:block tracking-widest">STATUS: PERSISTENT // SOURCE: ARCHIVE_DB</div>
+        <a href="/" class="text-neutral-800 hover:underline no-underline">[▲ RETURN TO INDEX]</a>
     </div>
 
 </div>
