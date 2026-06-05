@@ -17,15 +17,26 @@
             background: white; overflow: hidden;
         }
         @media (max-width: 768px) {
-            body { padding: 0; }
-            #outerWrap { width: 100%; height: 100vh; border: none; flex-direction: column; }
-            #sidebar { display: none; }
+        body { 
+            display: block; /* 取消居中对齐 */
+            padding: 0; 
+            overflow-y: auto; /* 允许整页滚动 */
         }
-        .article-body { font-size: 0.95rem; line-height: 1.6; color: #111; letter-spacing: -0.01em; }
-        .article-body p { margin-bottom: 0.8rem; }
-        
-        /* 目录项样式：强制块状显示以确保点击范围 */
-        .nav-item { display: block; width: 100%; }
+        #outerWrap {
+            width: 100% !important;
+            height: auto !important; /* 不再限制高度，随内容撑开 */
+            border: none !important;
+            display: block; /* 改为堆叠布局 */
+        }
+        #sidebar { 
+            display: none !important; /* 彻底移除侧边栏 */
+        }
+        main {
+            padding: 20px 15px !important;
+            min-height: 100vh;
+        }
+        h1 { font-size: 1.8rem !important; } /* 手机上标题稍微小一点，避免换行太尴尬 */
+    }
     </style>
 </head>
 <body class="selection:bg-[#111] selection:text-white overflow-hidden">
