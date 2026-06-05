@@ -110,7 +110,7 @@
         <!-- 中间：文章正文 -->
         <div id="postMain" class="flex-1 border-r border-[#111] flex flex-col overflow-hidden bg-white">
             <div class="p-4 border-b border-[#111] text-[10px] font-mono text-neutral-400 flex justify-between bg-[#fafafa] shrink-0">
-                <span>[{{ '%02d' | format(0) }}{{ category }}]</span>
+               <span>[{{ category }}]</span>
                 <span>{{ date | date("yyyy.MM.dd") }}</span>
             </div>
             <div class="overflow-y-auto no-scrollbar" style="flex:1;min-height:0;">
