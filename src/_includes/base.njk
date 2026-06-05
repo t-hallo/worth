@@ -337,61 +337,7 @@ document.getElementById('rssBtn').addEventListener('click', function() {
     });
 });
 
-// 文章开关
-const leftPanel     = document.getElementById('leftPanel');
-const centerPanel   = document.getElementById('centerPanel');
-const manifestoView = document.getElementById('manifestoView');
-const tocView       = document.getElementById('tocView');
-const listView      = document.getElementById('listView');
-const articleView   = document.getElementById('articleView');
-const isMobile      = () => window.innerWidth <= 768;
 
-function openArticle(index) {
-    const src = document.querySelector('#allArticles [data-article="' + index + '"]');
-    if (!src) return;
-
-    document.getElementById('articleTag').textContent =
-        '[' + String(index).padStart(2,'0') + ' / ' + src.dataset.category + ']';
-    document.getElementById('articleDate').textContent  = src.dataset.date;
-    document.getElementById('articleTitle').textContent = src.dataset.title;
-    document.getElementById('articleBody').innerHTML    = src.innerHTML;
-
-    document.querySelectorAll('.toc-item').forEach(el =>
-        el.classList.toggle('active-toc', el.dataset.index === String(index))
-    );
-
-    if (!isMobile()) {
-        manifestoView.classList.add('hidden-view');
-        tocView.classList.add('active');
-        leftPanel.style.cssText   = 'width:14%;min-width:14%;max-width:14%';
-        listView.classList.add('hidden-view');
-        articleView.classList.add('active');
-        centerPanel.style.cssText = 'width:64%;min-width:64%;max-width:64%';
-    } else {
-        listView.classList.add('hidden-view');
-        articleView.classList.add('active');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-}
-
-function closeArticle() {
-    tocView.classList.remove('active');
-    manifestoView.classList.remove('hidden-view');
-    leftPanel.style.cssText = '';
-    articleView.classList.remove('active');
-    listView.classList.remove('hidden-view');
-    centerPanel.style.cssText = '';
-    if (isMobile()) window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-document.querySelectorAll('.cargo-item[data-index]').forEach(el =>
-    el.addEventListener('click', () => openArticle(+el.dataset.index))
-);
-document.querySelectorAll('.toc-item[data-index]').forEach(el =>
-    el.addEventListener('click', () => openArticle(+el.dataset.index))
-);
-document.getElementById('backToList').addEventListener('click', closeArticle);
-document.getElementById('backToManifesto').addEventListener('click', closeArticle);
 
 // Canvas 划线（桌面）
 const canvas = document.getElementById('drawCanvas');
