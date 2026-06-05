@@ -4,6 +4,7 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPlugin(pluginRss);
 
   eleventyConfig.addPassthroughCopy("src/css/dist.css");
+eleventyConfig.addPassthroughCopy("src/_redirects");
 
   eleventyConfig.addFilter("idx", (val) => String(val).padStart(2, "0"));
 
