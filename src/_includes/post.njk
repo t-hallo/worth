@@ -8,10 +8,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
     <style>
         .font-syne { font-family: 'Syne', sans-serif; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar::-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* 核心布局：整体居中悬浮，边框缩窄 */
+        /* 整体居中悬浮，边框缩窄到 650px */
         body {
             background-color: #f7f7f7;
             display: flex;
@@ -22,8 +22,8 @@
         }
         #outerWrap {
             width: 90%;
-            max-width: 850px; /* 控制整体边框宽度 */
-            height: 85vh;     /* 控制整体高度 */
+            max-width: 650px; /* 【核心修改】更窄的整体边框宽度 */
+            height: 85vh;     
             border: 1px solid #111;
             display: flex;
             flex-direction: column;
@@ -31,52 +31,50 @@
             overflow: hidden;
         }
 
-        /* 移动端恢复全屏 */
         @media (max-width: 768px) {
             body { padding: 0; }
             #outerWrap { width: 100%; height: 100vh; border: none; }
         }
 
-        /* 文章排版 */
-        .article-body { font-size: 1rem; line-height: 1.8; color: #111111; font-weight: 500; }
-        .article-body p { margin-bottom: 1.5rem; }
-        .article-body h2 { font-family: 'Syne', sans-serif; font-size: 1.5rem; margin: 2.5rem 0 1rem; }
-        .article-body a { text-decoration: underline; text-underline-offset: 4px; }
-        .article-body a:hover { color: #000; }
+        .article-body { font-size: 0.95rem; line-height: 1.8; color: #111111; font-weight: 500; }
+        .article-body p { margin-bottom: 1.25rem; }
+        .article-body h2 { font-family: 'Syne', sans-serif; font-size: 1.3rem; margin: 2rem 0 1rem; }
+        .article-body a { text-decoration: underline; text-underline-offset: 3px; }
     </style>
 </head>
 <body class="selection:bg-[#111] selection:text-white overflow-hidden">
 
 <div id="outerWrap">
-    <div class="flex w-full border-b border-[#111] h-16 items-center justify-between px-6 shrink-0 z-10 bg-white">
-        <div class="font-syne text-xl tracking-tighter flex items-center gap-3">
+    <div class="flex w-full border-b border-[#111] h-14 items-center justify-between px-5 shrink-0 z-10 bg-white">
+        <div class="font-syne text-lg tracking-tighter flex items-center gap-2">
             <a href="/" class="font-black no-underline text-[#111]">WORTH.EE</a>
-            <span class="text-[9px] bg-[#111] text-white px-2 py-0.5 font-mono">// ARCHIVE</span>
+            <span class="text-[9px] bg-[#111] text-white px-1.5 py-0.5 font-mono">// ARCHIVE</span>
         </div>
-        <div class="font-mono text-xs tracking-widest text-neutral-800" id="clock">00:00:00</div>
+        <div class="font-mono text-[10px] tracking-widest text-neutral-800" id="clock">00:00:00</div>
     </div>
 
     <div class="flex-1 overflow-y-auto no-scrollbar bg-white">
-        <div class="max-w-[600px] mx-auto px-6 py-16">
-            <div class="text-[10px] font-mono text-neutral-400 tracking-widest mb-8 flex gap-4">
+        <div class="max-w-[500px] mx-auto px-6 py-12">
+            <div class="text-[9px] font-mono text-neutral-400 tracking-widest mb-6 flex gap-3">
                 <span>[{{ category or "02 // ARCHITECTURE" }}]</span>
                 <span>{{ date | date("yyyy.MM.dd") }}</span>
             </div>
-            <h1 class="font-syne text-4xl font-black tracking-tight leading-[0.95] mb-12">
+            <h1 class="font-syne text-3xl font-black tracking-tight leading-[1] mb-8">
                 {{ title }}
             </h1>
             <div class="article-body">
                 {{ content | safe }}
             </div>
-            <div class="mt-20 pt-8 border-t border-[#111] grid grid-cols-2 gap-8">
-                {% if prevPost %}<a href="{{ prevPost.url }}" class="block no-underline text-[#111]"><div class="text-[10px] font-mono text-neutral-400 mb-2">← PREV</div><div class="text-sm font-bold hover:underline">{{ prevPost.data.title }}</div></a>{% endif %}
-                {% if nextPost %}<a href="{{ nextPost.url }}" class="block no-underline text-[#111] text-right"><div class="text-[10px] font-mono text-neutral-400 mb-2">NEXT →</div><div class="text-sm font-bold hover:underline">{{ nextPost.data.title }}</div></a>{% endif %}
+            
+            <div class="mt-16 pt-6 border-t border-[#111] grid grid-cols-2 gap-4">
+                {% if prevPost %}<a href="{{ prevPost.url }}" class="block no-underline text-[#111]"><div class="text-[9px] font-mono text-neutral-400 mb-1">← PREV</div><div class="text-[11px] font-bold hover:underline">{{ prevPost.data.title | truncate(15) }}</div></a>{% endif %}
+                {% if nextPost %}<a href="{{ nextPost.url }}" class="block no-underline text-[#111] text-right"><div class="text-[9px] font-mono text-neutral-400 mb-1">NEXT →</div><div class="text-[11px] font-bold hover:underline">{{ nextPost.data.title | truncate(15) }}</div></a>{% endif %}
             </div>
         </div>
     </div>
 
-    <div class="flex w-full border-t border-[#111] h-12 items-center justify-between px-6 text-[10px] font-mono text-neutral-400 bg-white shrink-0">
-        <div>© 2026 WORTH.EE LIGHT PROTOCOL.</div>
+    <div class="flex w-full border-t border-[#111] h-10 items-center justify-between px-5 text-[9px] font-mono text-neutral-400 bg-white shrink-0">
+        <div>© 2026 WORTH.EE</div>
         <a href="/" class="text-[#111] hover:underline no-underline">[▲ INDEX]</a>
     </div>
 </div>
