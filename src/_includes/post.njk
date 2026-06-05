@@ -52,16 +52,19 @@
             <div id="clock">00:00:00</div>
         </header>
 
-        <div class="flex-1 overflow-y-auto no-scrollbar p-8">
-            <div class="max-w-[450px]">
-                <h1 class="font-syne text-3xl font-black tracking-tight leading-[0.9] mb-8 text-[#111]">
-                    {{ title }}
-                </h1>
-                <div class="article-body">
-                    {{ content | safe }}
-                </div>
-            </div>
+     <!-- 重点修改这一块区域 -->
+<div class="flex-1 overflow-y-auto no-scrollbar p-5"> <!-- p-8 减小到 p-5，让内容靠近线框 -->
+    <div class="max-w-[500px]">
+        <!-- 标题间距减小，紧凑感提升 -->
+        <h1 class="font-syne text-3xl font-black tracking-tight leading-[0.9] mb-4 text-[#111]">
+            {{ title }}
+        </h1>
+        <!-- 内容区域行距紧凑化 -->
+        <div class="article-body leading-[1.6]">
+            {{ content | safe }}
         </div>
+    </div>
+</div>
 
         <footer class="h-9 border-t border-[#111] flex items-center px-6 text-[8px] font-mono text-neutral-400 justify-between">
             <div>{{ date | date("yyyy.MM.dd") }}</div>
