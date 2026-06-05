@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} // WORTH.EE</title>
+    <meta name="description" content="{{ excerpt }}">
+    <meta property="og:title" content="{{ title }} // WORTH.EE">
+    <meta property="og:description" content="{{ excerpt }}">
+    <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+    <link rel="stylesheet" href="/css/dist.css">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Space Grotesk', "PingFang SC", sans-serif;
+            background: #f7f7f7;
+            color: #111;
+            margin: 0;
+            cursor: crosshair;
+        }
+        @media (max-width: 768px) { body { cursor: auto; } }
+        .font-syne { font-family: 'Syne', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        @media (min-width: 769px) {
+            body { overflow: hidden; height: 100vh; }
+            #outerWrap { height: calc(100vh - 3rem); }
+        }
+
+        /* 文章正文 */
+        .article-body { font-size: .95rem; line-height: 2; color: #222; }
+        .article-body p { margin-bottom: 1.25rem; }
+        .article-body h2 {
+            font-size: .7rem; font-family: 'Space Grotesk', monospace;
+            letter-spacing: .12em; color: #aaa;
+            margin-top: 2.5rem; margin-bottom: .6rem; font-weight: 500;
+        }
+        .article-body h3 {
+            font-size: .8rem; font-weight: 700;
+            margin-top: 2rem; margin-bottom: .5rem;
+        }
+        .article-body ul { list-style: none; padding: 0; margin-bottom: 1.25rem; }
+        .article-body ul li { padding-left: 1rem; position: relative; margin-bottom: .4rem; }
+        .article-body ul li::before { content: "—"; position: absolute; left: 0; color: #aaa; }
+        .article-body a { border-bottom: 1px solid #ddd; text-decoration: none; color: inherit; }
+        .article-body a:hover { border-color: #111; }
+        .article-body blockquote {
+            border-left: 2px solid #111; margin: 1.5rem 0;
+            padding-left: 1.25rem; color: #666; font-style: italic;
+        }
+        .article-body code {
+            font-family: monospace; font-size: .85rem;
+            background: #f4f4f4; padding: 1px 5px;
+        }
+
+        /* 手机适配 */
+        @media (max-width: 768px) {
+            body { padding: 0 !important; overflow-y: auto; }
+            #outerWrap { border: none !important; height: auto !important; min-height: 100dvh; }
+            #siteHeader { height: 52px !important; padding: 0 1rem; }
+            #postWrap { flex-direction: column !important; height: auto !important; overflow: visible !important; }
+            #sidebar { display: none !important; }
+            #postMain {
+                width: 100% !important; max-width: 100% !important;
+                height: auto !important; overflow: visible !important;
+                border-right: none !important;
+            }
+            #postMain .overflow-y-auto { overflow: visible !important; height: auto !important; }
+            #rightPanel { display: none !important; }
+            .article-body { font-size: 1rem; line-height: 1.9; }
+            #siteFooter { height: 44px !important; }
+        }
+    </style>
+</head>
+<body class="p-3 md:p-6 selection:bg-[#111] selection:text-white">
+
+<div id="outerWrap" class="border border-[#111] w-full flex flex-col bg-white overflow-hidden">
+
+    <!-- Header -->
+    <div id="siteHeader" class="flex w-full border-b border-[#111] h-14 md:h-16 items-center justify-between px-4 md:px-6 bg-white shrink-0 z-10">
+        <div class="font-syne text-lg md:text-xl tracking-tighter flex items-center gap-2">
+            <a href="/" class="font-black no-underline text-inherit tracking-tight">WORTH.EE</a>
+            <span class="text-[9px] bg-[#111] text-white px-2 py-0.5 font-mono">[STATUS: LIVE]</span>
+        </div>
+        <div class="text-[10px] font-mono text-neutral-400 hidden lg:block tracking-wider">{{ site.location }}</div>
+        <div class="font-mono text-xs tracking-widest text-neutral-800" id="clock">00:00:00</div>
+    </div>
+
+    <!-- 主体 -->
+    <div id="postWrap" class="flex flex-row w-full overflow-hidden" style="flex:1;min-height:0;">
+
+        <!-- 左侧：文章导航条 -->
+        <div id="sidebar" class="w-[22%] max-w-[22%] min-w-[22%] border-r border-[#111] flex flex-col bg-[#fafafa] overflow-hidden">
+            <div class="p-4 border-b border-[#111] text-[10px] font-mono text-neutral-400 flex justify-between shrink-0">
+                <span>[INDEX]</span>
+                <a href="/" class="hover:text-[#111] transition-colors no-underline text-inherit">← BACK</a>
+            </div>
+            <div class="flex-1 overflow-y-auto no-scrollbar flex flex-col divide-y divide-dotted divide-neutral-200 min-h-0">
+                {% for post in collections.posts %}
+                <a href="{{ post.url }}" class="p-4 no-underline text-inherit hover:bg-white transition-colors {% if page.url == post.url %}bg-white border-l-2 border-[#111]{% endif %}">
+                    <div class="text-[9px] font-mono text-neutral-400 mb-1">[{{ loop.index | idx }}] {{ post.date | date("yyyy.MM.dd") }}</div>
+                    <div class="text-xs font-bold text-neutral-800 leading-snug">{{ post.data.title | truncate(32) }}</div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 中间：文章正文 -->
+        <div id="postMain" class="flex-1 border-r border-[#111] flex flex-col overflow-hidden bg-white">
+            <div class="p-4 border-b border-[#111] text-[10px] font-mono text-neutral-400 flex justify-between bg-[#fafafa] shrink-0">
+                <span>[{{ '%02d' | format(0) }}{{ category }}]</span>
+                <span>{{ date | date("yyyy.MM.dd") }}</span>
+            </div>
+            <div class="overflow-y-auto no-scrollbar" style="flex:1;min-height:0;">
+                <div class="max-w-2xl mx-auto px-8 md:px-12 py-10 md:py-14">
+                    <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-neutral-900 mb-10 leading-tight">{{ title }}</h1>
+                    <div class="article-body">
+                        {{ content | safe }}
+                    </div>
+
+                    <!-- 上一篇 / 下一篇 -->
+                    <div class="mt-16 pt-6 border-t border-[#111] flex justify-between text-[10px] font-mono text-neutral-400">
+                        {% if prevPost %}
+                        <a href="{{ prevPost.url }}" class="hover:text-[#111] transition-colors no-underline text-inherit">
+                            ← {{ prevPost.data.title | truncate(28) }}
+                        </a>
+                        {% else %}
+                        <span></span>
+                        {% endif %}
+                        {% if nextPost %}
+                        <a href="{{ nextPost.url }}" class="hover:text-[#111] transition-colors no-underline text-inherit text-right">
+                            {{ nextPost.data.title | truncate(28) }} →
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧：联系方式 -->
+        <div id="rightPanel" class="w-[18%] max-w-[18%] min-w-[18%] flex flex-col justify-end bg-white overflow-hidden">
+            <div class="p-5 flex flex-col gap-2.5 font-mono text-xs shrink-0">
+                <div class="text-neutral-400 text-[10px] mb-1 tracking-wider">[CONTACT_SIGNAL]</div>
+                <a href="mailto:{{ site.email }}" class="group flex justify-between items-center py-1 border-b border-dotted border-neutral-200 hover:border-[#111] transition-colors no-underline text-inherit">
+                    <span class="group-hover:translate-x-1 transition-transform duration-300">→ MAIL</span>
+                    <span class="text-neutral-400 group-hover:text-[#111]">[→]</span>
+                </a>
+                <a href="/feed.xml" class="group flex justify-between items-center py-1 border-b border-dotted border-neutral-200 hover:border-[#111] transition-colors no-underline text-inherit">
+                    <span class="group-hover:translate-x-1 transition-transform duration-300">→ RSS</span>
+                    <span class="text-neutral-400 group-hover:text-[#111]">[→]</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div id="siteFooter" class="flex w-full border-t border-[#111] h-10 md:h-12 items-center justify-between px-4 md:px-6 text-[10px] font-mono text-neutral-400 bg-white shrink-0">
+        <div>© 2026 WORTH.EE</div>
+        <div class="hidden md:block tracking-widest">ANTI-CONVENTIONAL STRUCTURE</div>
+        <a href="/" class="text-neutral-800 hover:underline no-underline">← INDEX</a>
+    </div>
+
+</div>
+
+<script>
+(function tick(){
+    document.getElementById('clock').textContent = new Date().toTimeString().split(' ')[0];
+    setTimeout(tick, 1000);
+})();
+</script>
+</body>
+</html>
