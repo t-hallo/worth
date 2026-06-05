@@ -2,63 +2,107 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{{ title }} // WORTH.EE</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Syne:wght@800&display=swap" rel="stylesheet">
     <style>
-        :root { --font-main: 'Inter', sans-serif; --font-mono: 'Space Mono', monospace; }
-        body { font-family: var(--font-main); background-color: #f7f7f7; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .font-mono { font-family: var(--font-mono); }
+        body { font-family: 'Inter', sans-serif; background-color: #f7f7f7; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .font-syne { font-family: 'Syne', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        #outerWrap { width: 95%; max-width: 850px; height: 90vh; border: 1px solid #111; display: flex; flex-direction: row; background: white; overflow: hidden; }
-
-        /* 移动端深度适配 */
-        @media (max-width: 768px) {
-            body { padding: 0; display: block; }
-            #outerWrap { width: 100%; height: 100%; border: none; flex-direction: column; }
-            #sidebar { display: none; }
-            .mobile-back { display: flex !important; } /* 强制显示返回按钮 */
+        #outerWrap {
+            width: 95%; max-width: 850px; height: 90vh;
+            border: 1px solid #111; display: flex; flex-direction: row;
+            background: white; overflow: hidden;
         }
+   @media (max-width: 768px) {
+    body { display: block; padding: 0; overflow-y: auto; cursor: auto; }
+    
+    #outerWrap {
+        width: 100% !important;
+        height: auto !important;
+        border: none !important;
+        display: block;
+    }
+    
+    #sidebar { display: none !important; }
+    
+    main {
+        padding: 0 !important;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
 
-        .article-body { font-size: 1rem; line-height: 1.7; color: #111; }
-        .article-body p { margin-bottom: 1rem; }
+    /* header 保留，确保 BACK 按钮可见 */
+    main header {
+        height: 44px !important;
+        padding: 0 1rem !important;
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 10;
+    }
+
+    /* 正文区域 */
+    main .flex-1 {
+        padding: 1.5rem 1.25rem 3rem !important;
+    }
+
+    h1 { font-size: 1.8rem !important; line-height: 1.1 !important; }
+
+    .article-body { font-size: 1rem !important; line-height: 1.75 !important; }
+    .article-body p { margin-bottom: 1rem !important; }
+
+    /* footer */
+    main footer { height: 44px !important; padding: 0 1rem !important; }
+}
     </style>
 </head>
-<body>
-
+<body class="selection:bg-[#111] selection:text-white overflow-hidden">
 <div id="outerWrap">
-    <aside id="sidebar" class="w-[240px] border-r border-[#111] p-8 flex flex-col shrink-0 bg-white">
-        <a href="/" class="text-xl font-bold mb-12 text-[#111] no-underline block tracking-tighter">WORTH.EE</a>
-        <div class="text-[10px] font-mono text-neutral-400 mb-8 uppercase border-b border-[#111] pb-3">[INDEX_FILE]</div>
-        <div class="flex flex-col gap-6 font-mono">
-            {% for post in collections.posts %}
-            <a href="{{ post.url }}" class="text-[13px] {% if page.url == post.url %}text-[#111] font-bold{% else %}text-neutral-400{% endif %} no-underline flex flex-col gap-1.5">
-                <span class="opacity-60">{{ loop.index | idx }}</span>
-                <span>{{ post.data.title | truncate(25) }}</span>
-            </a>
-            {% endfor %}
-        </div>
-    </aside>
-
+<!-- 修改后的 Sidebar -->
+<aside id="sidebar" class="w-[220px] border-r border-[#111] p-6 flex flex-col shrink-0 bg-white">
+    <!-- 将标题改小，字间距拉大，与 INDEX 形成统一的系统头部 -->
+    <a href="/" class="font-syne text-[10px] font-black tracking-[0.2em] mb-8 text-[#111] no-underline block uppercase">
+        WORTH.EE
+    </a>
+    
+    <div class="text-[9px] font-mono text-neutral-400 mb-6 tracking-[0.2em] uppercase border-b border-[#111] pb-2">
+        [INDEX_FILE]
+    </div>
+    
+    <div class="flex flex-col gap-4 font-mono">
+        {% for post in collections.posts %}
+        <a href="{{ post.url }}" class="nav-item text-[10px] leading-tight {% if page.url == post.url %}text-[#111] font-bold{% else %}text-neutral-400 hover:text-[#111]{% endif %} no-underline flex flex-col gap-1">
+            <span class="opacity-60">{{ loop.index | idx }}</span>
+            <span>{{ post.data.title | truncate(20) }}</span>
+        </a>
+        {% endfor %}
+    </div>
+</aside>
     <main class="flex-1 flex flex-col overflow-hidden">
-        <header class="flex w-full border-b border-[#111] h-14 items-center justify-between px-5 shrink-0 font-mono text-[10px] text-neutral-400">
-            <a href="/" class="mobile-back hidden items-center gap-1 text-[#111] no-underline font-bold uppercase hover:opacity-60">
-                ← BACK
-            </a>
-            <div class="hidden md:block">[{{ category or "POST" }}]</div>
+        <header class="flex w-full border-b border-[#111] h-10 items-center justify-between px-5 shrink-0 text-[8px] font-mono text-neutral-400">
+            <div>[{{ category or "POST" }}]</div>
             <div id="clock">00:00:00</div>
         </header>
-
-        <div class="flex-1 overflow-y-auto p-6 md:p-10">
-            <div class="w-full max-w-[600px]">
-                <h1 class="text-3xl font-bold tracking-tight mb-8 text-[#111] leading-tight">{{ title }}</h1>
-                <div class="article-body">{{ content | safe }}</div>
+        <div class="flex-1 overflow-y-auto no-scrollbar p-6">
+            <div class="w-full">
+                <h1 class="font-syne text-3xl font-black tracking-tight leading-[0.9] mb-6 text-[#111]">
+                    {{ title }}
+                </h1>
+                <div class="article-body">
+                    {{ content | safe }}
+                </div>
             </div>
         </div>
+        <footer class="h-8 border-t border-[#111] flex items-center px-5 text-[8px] font-mono text-neutral-400 justify-between">
+            <div>{{ date | date("yyyy.MM.dd") }}</div>
+            <a href="/" class="text-[#111] hover:underline no-underline uppercase tracking-widest">[▲ INDEX]</a>
+        </footer>
     </main>
 </div>
-
 <script>
     function updateClock() {
         document.getElementById('clock').textContent = new Date().toTimeString().split(' ')[0];
