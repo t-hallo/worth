@@ -2,8 +2,8 @@
   "name": "worthee-site",
   "version": "1.0.0",
   "scripts": {
-    "build": "npx tailwindcss -i ./src/css/global.css -o ./src/css/dist.css && eleventy",
-    "start": "npx concurrently \"npx tailwindcss -i ./src/css/global.css -o ./src/css/dist.css --watch\" \"eleventy --serve --port=8080\"",
+    "build": "tailwindcss -i ./src/css/global.css -o ./src/css/dist.css && eleventy",
+    "start": "concurrently \"tailwindcss -i ./src/css/global.css -o ./src/css/dist.css --watch\" \"eleventy --serve --port=8080\"",
     "watch": "eleventy --watch"
   },
   "devDependencies": {
