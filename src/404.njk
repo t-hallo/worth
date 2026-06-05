@@ -1,0 +1,44 @@
+---
+permalink: /404.html
+eleventyExcludeFromCollections: true
+---
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 // WORTH.EE</title>
+    <link rel="stylesheet" href="/css/dist.css">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; }
+        body {
+            font-family: 'Space Grotesk', "PingFang SC", sans-serif;
+            background: #f7f7f7;
+            color: #111;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: crosshair;
+        }
+        .font-syne { font-family: 'Syne', sans-serif; }
+    </style>
+</head>
+<body>
+    <div class="border border-[#111] bg-white p-12 md:p-20 flex flex-col gap-6 max-w-lg w-full mx-4">
+        <div class="text-[10px] font-mono text-neutral-400 tracking-widest">[ERROR // 404]</div>
+        <div class="font-syne text-6xl md:text-8xl font-black tracking-tighter leading-none">404</div>
+        <div class="text-xs font-mono text-neutral-400 leading-relaxed">
+            <p>THIS PAGE DOES NOT EXIST.</p>
+            <p>OR IT DID, AND NOW IT DOESN'T.</p>
+            <p>EITHER WAY — IT'S GONE.</p>
+        </div>
+        <div class="border-t border-neutral-200 pt-6">
+            <a href="/" class="text-xs font-mono text-neutral-800 hover:underline tracking-wider">
+                ← RETURN TO INDEX
+            </a>
+        </div>
+    </div>
+</body>
+</html>
