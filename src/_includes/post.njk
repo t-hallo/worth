@@ -16,27 +16,48 @@
             border: 1px solid #111; display: flex; flex-direction: row;
             background: white; overflow: hidden;
         }
-        @media (max-width: 768px) {
-        body { 
-            display: block; /* 取消居中对齐 */
-            padding: 0; 
-            overflow-y: auto; /* 允许整页滚动 */
-        }
-        #outerWrap {
-            width: 100% !important;
-            height: auto !important; /* 不再限制高度，随内容撑开 */
-            border: none !important;
-            display: block; /* 改为堆叠布局 */
-        }
-        #sidebar { 
-            display: none !important; /* 彻底移除侧边栏 */
-        }
-        main {
-            padding: 20px 15px !important;
-            min-height: 100vh;
-        }
-        h1 { font-size: 1.8rem !important; } /* 手机上标题稍微小一点，避免换行太尴尬 */
+   @media (max-width: 768px) {
+    body { display: block; padding: 0; overflow-y: auto; cursor: auto; }
+    
+    #outerWrap {
+        width: 100% !important;
+        height: auto !important;
+        border: none !important;
+        display: block;
     }
+    
+    #sidebar { display: none !important; }
+    
+    main {
+        padding: 0 !important;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* header 保留，确保 BACK 按钮可见 */
+    main header {
+        height: 44px !important;
+        padding: 0 1rem !important;
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 10;
+    }
+
+    /* 正文区域 */
+    main .flex-1 {
+        padding: 1.5rem 1.25rem 3rem !important;
+    }
+
+    h1 { font-size: 1.8rem !important; line-height: 1.1 !important; }
+
+    .article-body { font-size: 1rem !important; line-height: 1.75 !important; }
+    .article-body p { margin-bottom: 1rem !important; }
+
+    /* footer */
+    main footer { height: 44px !important; padding: 0 1rem !important; }
+}
     </style>
 </head>
 <body class="selection:bg-[#111] selection:text-white overflow-hidden">
