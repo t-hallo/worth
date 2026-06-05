@@ -33,19 +33,26 @@
 <body class="selection:bg-[#111] selection:text-white overflow-hidden">
 
 <div id="outerWrap">
-    <aside id="sidebar" class="w-[200px] border-r border-[#111] p-6 flex flex-col shrink-0 bg-white">
-        <a href="/" class="font-syne text-lg font-black mb-8 text-[#111] no-underline block">WORTH.EE</a>
-        
-        <div class="text-[9px] font-mono text-neutral-400 mb-5 tracking-widest">[INDEX]</div>
-        
-        <div class="flex flex-col gap-3 font-mono">
-            {% for post in collections.posts %}
-            <a href="{{ post.url }}" class="nav-item text-[11px] {% if page.url == post.url %}text-[#111] font-bold{% else %}text-neutral-400 hover:text-[#111]{% endif %} no-underline">
-                {{ loop.index | idx }} // {{ post.data.title | truncate(15) }}
-            </a>
-            {% endfor %}
-        </div>
-    </aside>
+<!-- 修改后的 Sidebar -->
+<aside id="sidebar" class="w-[220px] border-r border-[#111] p-6 flex flex-col shrink-0 bg-white">
+    <!-- 将标题改小，字间距拉大，与 INDEX 形成统一的系统头部 -->
+    <a href="/" class="font-syne text-[10px] font-black tracking-[0.2em] mb-8 text-[#111] no-underline block uppercase">
+        WORTH.EE
+    </a>
+    
+    <div class="text-[9px] font-mono text-neutral-400 mb-6 tracking-[0.2em] uppercase border-b border-[#111] pb-2">
+        [INDEX_FILE]
+    </div>
+    
+    <div class="flex flex-col gap-4 font-mono">
+        {% for post in collections.posts %}
+        <a href="{{ post.url }}" class="nav-item text-[10px] leading-tight {% if page.url == post.url %}text-[#111] font-bold{% else %}text-neutral-400 hover:text-[#111]{% endif %} no-underline flex flex-col gap-1">
+            <span class="opacity-60">{{ loop.index | idx }}</span>
+            <span>{{ post.data.title | truncate(20) }}</span>
+        </a>
+        {% endfor %}
+    </div>
+</aside>
 
     <main class="flex-1 flex flex-col overflow-hidden">
         <header class="flex w-full border-b border-[#111] h-10 items-center justify-between px-5 shrink-0 text-[8px] font-mono text-neutral-400">
