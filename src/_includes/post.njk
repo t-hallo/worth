@@ -2,170 +2,87 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{{ title }} // WORTH.EE</title>
-    <meta name="description" content="{{ excerpt }}">
-    <meta property="og:title" content="{{ title }} // WORTH.EE">
-    <meta property="og:description" content="{{ excerpt }}">
-    <meta property="og:url" content="{{ site.url }}{{ page.url }}">
-    <link rel="stylesheet" href="/css/dist.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; }
-        body {
-            font-family: 'Space Grotesk', "PingFang SC", sans-serif;
-            background: #f7f7f7;
-            color: #111;
-            cursor: crosshair;
-        }
-        @media (max-width: 768px) { body { cursor: auto; } }
         .font-syne { font-family: 'Syne', sans-serif; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        @media (min-width: 769px) {
-            body { overflow: hidden; height: 100vh; }
-            #outerWrap { height: calc(100vh - 3rem); }
-        }
-
-        /* 文章正文 */
-        .article-body { font-size: .9rem; line-height: 2; color: #222; }
-        .article-body p { margin-bottom: 1.2rem; }
-        .article-body h2 {
-            font-size: .65rem;
-            font-family: 'Space Grotesk', monospace;
-            letter-spacing: .16em;
-            color: #999;
-            margin-top: 3rem;
-            margin-bottom: .75rem;
-            font-weight: 500;
-            text-transform: uppercase;
-        }
-        .article-body h3 { font-size: .88rem; font-weight: 700; margin-top: 2rem; margin-bottom: .5rem; }
-        .article-body ul, .article-body ol { padding: 0; margin-bottom: 1.2rem; list-style: none; }
-        .article-body ul li, .article-body ol li { padding-left: 1.25rem; position: relative; margin-bottom: .4rem; }
-        .article-body ul li::before { content: "—"; position: absolute; left: 0; color: #bbb; }
-        .article-body ol { counter-reset: item; }
-        .article-body ol li::before { content: counter(item) "."; counter-increment: item; position: absolute; left: 0; color: #bbb; font-size: .75rem; font-family: monospace; }
-        .article-body a { border-bottom: 1px solid #ddd; text-decoration: none; color: inherit; }
-        .article-body a:hover { border-color: #111; }
-        .article-body blockquote { border-left: 1px solid #111; margin: 2rem 0; padding: .5rem 0 .5rem 1.5rem; color: #555; }
-        .article-body code { font-family: monospace; font-size: .82rem; background: #f4f4f4; padding: 1px 5px; }
-        .article-body pre { background: #f4f4f4; padding: 1rem 1.25rem; margin-bottom: 1.2rem; overflow-x: auto; font-size: .8rem; line-height: 1.6; }
-        .article-body pre code { background: none; padding: 0; }
-        .article-body hr { border: none; border-top: 1px dotted #ddd; margin: 2.5rem 0; }
-
-        /* 手机适配 */
-        @media (max-width: 768px) {
-            body { padding: 0; overflow-y: auto; }
-            #outerWrap { border: none !important; height: auto !important; min-height: 100dvh; }
-            #siteHeader { height: 52px !important; padding: 0 1rem !important; }
-            #postScroll { overflow: visible !important; height: auto !important; }
-            .post-inner { padding: 2rem 1.25rem 3rem !important; }
-            .article-body { font-size: .97rem; }
-            #siteFooter { height: 44px !important; }
-            #siteFooter .md\:block { display: none !important; }
-        }
+        
+        /* 强制网格容器 */
+        #outerWrap { height: calc(100vh - 3rem); }
+        @media (max-width: 768px) { #outerWrap { height: 100vh; } }
+        
+        /* 文章排版系统 */
+        .article-body { font-size: 1rem; line-height: 1.8; color: #111111; font-weight: 500; }
+        .article-body p { margin-bottom: 1.5rem; }
+        .article-body h2 { font-family: 'Syne', sans-serif; font-size: 1.5rem; margin: 2.5rem 0 1rem; }
+        .article-body a { text-decoration: underline; text-underline-offset: 4px; }
+        .article-body a:hover { color: #000; }
+        
+        /* 列表逻辑 */
+        .article-body ul li { margin-bottom: 0.5rem; }
     </style>
 </head>
-<body class="p-3 md:p-6 selection:bg-[#111] selection:text-white">
+<body class="p-2 md:p-6 selection:bg-[#111] selection:text-white bg-white overflow-hidden">
 
 <div id="outerWrap" class="border border-[#111] w-full flex flex-col bg-white overflow-hidden">
 
-    <!-- Header -->
-    <div id="siteHeader" class="flex w-full border-b border-[#111] h-14 md:h-16 items-center justify-between px-4 md:px-6 bg-white shrink-0 z-10">
-        <div class="font-syne text-lg md:text-xl tracking-tighter flex items-center gap-2">
-            <a href="/" class="font-black no-underline text-inherit tracking-tight">WORTH.EE</a>
+    <div class="flex w-full border-b border-[#111] h-16 items-center justify-between px-6 shrink-0 z-10 bg-white">
+        <div class="font-syne text-xl tracking-tighter flex items-center gap-3">
+            <a href="/" class="font-black no-underline text-[#111]">WORTH.EE</a>
             <span class="text-[9px] bg-[#111] text-white px-2 py-0.5 font-mono">// ARCHIVE</span>
         </div>
-        <div class="text-[10px] font-mono text-neutral-400 hidden lg:block tracking-wider">
-            {% for post in collections.posts %}{% if page.url == post.url %}PAGE:{{ loop.index | idx }}{% endif %}{% endfor %}
-        </div>
-        <div class="flex items-center gap-4">
-            <div class="font-mono text-xs tracking-widest text-neutral-800" id="clock">00:00:00</div>
-            <a href="/" class="font-mono text-[10px] tracking-widest text-neutral-400 hover:text-[#111] transition-colors no-underline hidden md:block">[BACK ←]</a>
-        </div>
+        <div class="font-mono text-xs tracking-widest text-neutral-800" id="clock">00:00:00</div>
     </div>
 
-    <!-- 文章区：单栏居中 -->
-    <div id="postScroll" class="overflow-y-auto no-scrollbar" style="flex:1;min-height:0;">
-        <div class="post-inner max-w-2xl mx-auto px-8 md:px-0 py-12 md:py-16">
-
-            <!-- 文章标签行 -->
-            <div class="text-[10px] font-mono text-neutral-400 tracking-widest mb-6 flex items-center gap-4">
-                <span>[{{ loop.index | idx if loop else "—" }} // {{ category or "POST" }}]</span>
-                <span class="text-neutral-300">—</span>
+    <div class="flex-1 overflow-y-auto no-scrollbar bg-white">
+        <div class="max-w-[720px] mx-auto px-6 py-16 md:py-24">
+            
+            <div class="text-[10px] font-mono text-neutral-400 tracking-widest mb-8 flex gap-4">
+                <span>[{{ category or "02 // ARCHITECTURE" }}]</span>
                 <span>{{ date | date("yyyy.MM.dd") }}</span>
             </div>
 
-            <!-- 标题 -->
-            <h1 class="font-syne text-2xl md:text-4xl font-black tracking-tight text-[#111] mb-4 leading-tight">
+            <h1 class="font-syne text-4xl md:text-6xl font-black tracking-tight leading-[0.95] mb-12">
                 {{ title }}
             </h1>
 
-            <!-- 分隔线 -->
-            <div class="border-t border-[#111] mt-8 mb-10"></div>
-
-            <!-- 正文 -->
             <div class="article-body">
                 {{ content | safe }}
             </div>
 
-            <!-- 底部分隔 + 导航 -->
-            <div class="border-t border-dotted border-neutral-300 mt-16 pt-8">
-                <div class="grid grid-cols-2 gap-8 text-[10px] font-mono">
-                    <div>
-                        {% if prevPost %}
-                        <div class="text-neutral-400 mb-2 tracking-wider">← PREV</div>
-                        <a href="{{ prevPost.url }}" class="text-neutral-600 hover:text-[#111] transition-colors no-underline leading-relaxed block text-xs font-bold">
-                            {{ prevPost.data.title | truncate(40) }}
-                        </a>
-                        {% endif %}
-                    </div>
-                    <div class="text-right">
-                        {% if nextPost %}
-                        <div class="text-neutral-400 mb-2 tracking-wider">NEXT →</div>
-                        <a href="{{ nextPost.url }}" class="text-neutral-600 hover:text-[#111] transition-colors no-underline leading-relaxed block text-xs font-bold">
-                            {{ nextPost.data.title | truncate(40) }}
-                        </a>
-                        {% endif %}
-                    </div>
-                </div>
+            <div class="mt-20 pt-8 border-t border-[#111] grid grid-cols-2 gap-8">
+                {% if prevPost %}
+                <a href="{{ prevPost.url }}" class="block group no-underline text-[#111]">
+                    <div class="text-[10px] font-mono text-neutral-400 mb-2">← PREV</div>
+                    <div class="text-sm font-bold group-hover:underline">{{ prevPost.data.title }}</div>
+                </a>
+                {% endif %}
+                {% if nextPost %}
+                <a href="{{ nextPost.url }}" class="block group no-underline text-[#111] text-right">
+                    <div class="text-[10px] font-mono text-neutral-400 mb-2">NEXT →</div>
+                    <div class="text-sm font-bold group-hover:underline">{{ nextPost.data.title }}</div>
+                </a>
+                {% endif %}
             </div>
-
-            <!-- 所有文章列表（折叠在底部） -->
-            <div class="mt-16 border-t border-[#111] pt-6">
-                <div class="text-[10px] font-mono text-neutral-400 tracking-widest mb-4">[ALL POSTS]</div>
-                <div class="flex flex-col divide-y divide-dotted divide-neutral-200">
-                    {% for post in collections.posts %}
-                    <a href="{{ post.url }}"
-                       class="py-3 flex justify-between items-baseline no-underline text-inherit hover:pl-3 transition-all duration-300 {% if page.url == post.url %}pl-3 border-l-2 border-[#111]{% endif %}">
-                        <span class="text-xs font-bold {% if page.url == post.url %}text-[#111]{% else %}text-neutral-500{% endif %}">
-                            {{ post.data.title }}
-                        </span>
-                        <span class="text-[9px] font-mono text-neutral-400 shrink-0 ml-4">{{ post.date | date("yyyy.MM.dd") }}</span>
-                    </a>
-                    {% endfor %}
-                </div>
-            </div>
-
         </div>
     </div>
 
-    <!-- Footer -->
-    <div id="siteFooter" class="flex w-full border-t border-[#111] h-10 md:h-12 items-center justify-between px-4 md:px-6 text-[10px] font-mono text-neutral-400 bg-white shrink-0">
+    <div class="flex w-full border-t border-[#111] h-12 items-center justify-between px-6 text-[10px] font-mono text-neutral-400 bg-white shrink-0">
         <div>© 2026 WORTH.EE LIGHT PROTOCOL.</div>
-        <div class="hidden md:block tracking-widest">STATUS: PERSISTENT // SOURCE: ARCHIVE_DB</div>
-        <a href="/" class="text-neutral-800 hover:underline no-underline">[▲ RETURN TO INDEX]</a>
+        <a href="/" class="text-[#111] hover:underline no-underline">[▲ INDEX]</a>
     </div>
 
 </div>
 
 <script>
-(function tick(){
-    document.getElementById('clock').textContent = new Date().toTimeString().split(' ')[0];
-    setTimeout(tick, 1000);
-})();
+    function updateClock() {
+        document.getElementById('clock').textContent = new Date().toTimeString().split(' ')[0];
+    }
+    setInterval(updateClock, 1000); updateClock();
 </script>
 </body>
 </html>
