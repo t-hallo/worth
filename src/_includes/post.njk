@@ -33,23 +33,22 @@
 <body class="selection:bg-[#111] selection:text-white overflow-hidden">
 
 <div id="outerWrap">
-<!-- 修改后的 Sidebar 部分 -->
-<aside id="sidebar" class="w-[240px] border-r border-[#111] p-8 flex flex-col shrink-0 bg-white">
-    <!-- 标题放大，增加存在感 -->
-    <a href="/" class="font-syne text-xl font-black tracking-[0.05em] mb-12 text-[#111] no-underline block uppercase">
+<!-- 修改后的 Sidebar -->
+<aside id="sidebar" class="w-[220px] border-r border-[#111] p-6 flex flex-col shrink-0 bg-white">
+    <!-- 将标题改小，字间距拉大，与 INDEX 形成统一的系统头部 -->
+    <a href="/" class="font-syne text-[10px] font-black tracking-[0.2em] mb-8 text-[#111] no-underline block uppercase">
         WORTH.EE
     </a>
     
-    <div class="text-[10px] font-mono text-neutral-400 mb-8 tracking-[0.2em] uppercase border-b border-[#111] pb-3">
+    <div class="text-[9px] font-mono text-neutral-400 mb-6 tracking-[0.2em] uppercase border-b border-[#111] pb-2">
         [INDEX_FILE]
     </div>
     
-    <!-- 目录索引放大，增强易读性 -->
-    <div class="flex flex-col gap-6 font-mono">
+    <div class="flex flex-col gap-4 font-mono">
         {% for post in collections.posts %}
-        <a href="{{ post.url }}" class="nav-item group {% if page.url == post.url %}text-[#111] font-bold{% else %}text-neutral-400{% endif %} no-underline flex flex-col gap-1.5">
-            <span class="text-[10px] opacity-60">{{ loop.index | idx }}</span>
-            <span class="text-[13px] leading-[1.3] group-hover:underline">{{ post.data.title | truncate(25) }}</span>
+        <a href="{{ post.url }}" class="nav-item text-[10px] leading-tight {% if page.url == post.url %}text-[#111] font-bold{% else %}text-neutral-400 hover:text-[#111]{% endif %} no-underline flex flex-col gap-1">
+            <span class="opacity-60">{{ loop.index | idx }}</span>
+            <span>{{ post.data.title | truncate(20) }}</span>
         </a>
         {% endfor %}
     </div>
