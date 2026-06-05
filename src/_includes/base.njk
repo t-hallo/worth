@@ -63,6 +63,9 @@
         .article-body a { border-bottom:1px solid #ddd; text-decoration:none; color:inherit; }
         .article-body a:hover { border-color:#111; }
 
+        /* manifesto 段落不留空行 */
+        #manifestoView p { margin: 0; }
+
         /* ── RSS Toast ── */
         #rssToast {
             position: fixed;
@@ -168,6 +171,13 @@
 
             /* 预渲染区不占空间 */
             #allArticles { position: absolute; visibility: hidden; pointer-events: none; }
+
+            /* manifesto 和文章正文段落去掉多余空行 */
+            #manifestoView p { margin: 0; line-height: 1.7; }
+            .article-body p { margin-bottom: 0.6rem; }
+
+            /* manifesto 段落去掉空行 */
+            #manifestoView p { margin: 0; line-height: 1.7; }
 
             /* footer */
             #siteFooter { height: 44px !important; }
