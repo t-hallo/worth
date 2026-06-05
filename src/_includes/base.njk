@@ -7,112 +7,204 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        * { box-sizing: border-box; }
         body {
             font-family: 'Space Grotesk', "PingFang SC", sans-serif;
-            background-color: #f7f7f7;
-            color: #111111;
-            cursor: crosshair;
-            overflow: hidden;
+            background: #f7f7f7;
+            color: #111;
+            margin: 0;
         }
-        @media (max-width: 768px) { body { overflow: auto; cursor: auto; } }
         .font-syne { font-family: 'Syne', sans-serif; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+        /* ── 桌面固定视口 ── */
+        @media (min-width: 769px) {
+            body { cursor: crosshair; overflow: hidden; height: 100vh; }
+            #outerWrap { height: calc(100vh - 3rem); }
+            #mainBody { height: 0; flex: 1; }
+        }
+
+        /* ── 三栏宽度动画 ── */
         #leftPanel, #centerPanel {
-            transition: width 0.5s cubic-bezier(0.16,1,0.3,1),
-                        min-width 0.5s cubic-bezier(0.16,1,0.3,1),
-                        max-width 0.5s cubic-bezier(0.16,1,0.3,1);
+            transition: width .5s cubic-bezier(.16,1,.3,1),
+                        min-width .5s cubic-bezier(.16,1,.3,1),
+                        max-width .5s cubic-bezier(.16,1,.3,1);
         }
-        .cargo-item {
-            position: relative;
-            transition: all 0.5s cubic-bezier(0.16,1,0.3,1);
-            background-color: #ffffff;
-        }
+
+        /* ── 视图切换 ── */
+        #manifestoView { display:flex; flex-direction:column; flex:1; overflow:hidden; }
+        #manifestoView.hidden-view { display:none; }
+        #tocView { display:none; flex-direction:column; flex:1; overflow:hidden; }
+        #tocView.active { display:flex; }
+        #listView { display:flex; flex-direction:column; flex:1; min-height:0; }
+        #listView.hidden-view { display:none; }
+        #articleView { display:none; flex-direction:column; flex:1; min-height:0; overflow:hidden; }
+        #articleView.active { display:flex; }
+
+        .cargo-item { transition: padding-left .4s cubic-bezier(.16,1,.3,1); cursor:pointer; }
         .cargo-item:hover { padding-left: 2rem; }
+        .toc-item { transition: padding-left .3s cubic-bezier(.16,1,.3,1); cursor:pointer; }
+        .toc-item:hover { padding-left: .75rem; }
+        .toc-item.active-toc { padding-left: .75rem; border-left: 2px solid #111; }
+        .back-btn { cursor:pointer; }
+        .back-btn:hover { opacity:.6; }
 
-        #manifestoView { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
-        #manifestoView.hidden-view { display: none; }
-        #tocView { display: none; flex-direction: column; flex: 1; overflow: hidden; }
-        #tocView.active { display: flex; }
-        #listView { display: flex; flex-direction: column; height: 100%; }
-        #listView.hidden-view { display: none; }
-        #articleView { display: none; flex-direction: column; flex: 1; overflow: hidden; }
-        #articleView.active { display: flex; }
-
-        .toc-item { transition: all 0.3s cubic-bezier(0.16,1,0.3,1); cursor: pointer; }
-        .toc-item:hover { padding-left: 0.75rem; }
-        .toc-item.active-toc { padding-left: 0.75rem; border-left: 2px solid #111111; }
-        .back-btn { cursor: pointer; transition: opacity 0.2s; }
-        .back-btn:hover { opacity: 0.6; }
-
-        .article-body { font-size: 0.9rem; line-height: 2; color: #222; }
-        .article-body p { margin-bottom: 1.25rem; }
+        /* ── 文章正文 ── */
+        .article-body { font-size:.9rem; line-height:2; color:#222; }
+        .article-body p { margin-bottom:1.25rem; }
         .article-body h2 {
-            font-size: 0.7rem;
-            font-family: 'Space Grotesk', monospace;
-            letter-spacing: 0.12em;
-            color: #aaa;
-            margin-top: 2.5rem;
-            margin-bottom: 0.6rem;
-            font-weight: 500;
+            font-size:.7rem; font-family:'Space Grotesk',monospace;
+            letter-spacing:.12em; color:#aaa;
+            margin-top:2.5rem; margin-bottom:.6rem; font-weight:500;
         }
-        .article-body ul { list-style: none; padding: 0; margin-bottom: 1.25rem; }
-        .article-body ul li::before { content: "— "; color: #aaa; }
-        .article-body a { border-bottom: 1px solid #ddd; text-decoration: none; color: inherit; }
-        .article-body a:hover { border-color: #111; }
+        .article-body ul { list-style:none; padding:0; margin-bottom:1.25rem; }
+        .article-body ul li::before { content:"— "; color:#aaa; }
+        .article-body a { border-bottom:1px solid #ddd; text-decoration:none; color:inherit; }
+        .article-body a:hover { border-color:#111; }
 
+        /* ── RSS Toast ── */
+        #rssToast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: #111;
+            color: #fff;
+            font-family: monospace;
+            font-size: 11px;
+            letter-spacing: .12em;
+            padding: 7px 18px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s, transform .2s;
+            z-index: 9999;
+        }
+        #rssToast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ════════════════════════════
+           手机端：单栏布局
+        ════════════════════════════ */
         @media (max-width: 768px) {
-            #outerWrap { height: auto !important; min-height: 100vh; overflow: visible !important; }
-            #mainBody { flex-direction: column !important; overflow: visible !important; height: auto !important; }
-            #leftPanel {
-                width: 100% !important; max-width: 100% !important; min-width: 0 !important;
-                border-right: none !important; border-bottom: 1px solid #111; height: auto !important;
+            body { overflow-y: auto; }
+
+            /* 外框撑满屏幕，自然流 */
+            body { padding: 0 !important; }
+            #outerWrap {
+                border: none !important;
+                height: auto !important;
+                min-height: 100dvh;
             }
+
+            /* header 精简 */
+            #siteHeader { height: 52px !important; padding: 0 1rem; }
+            #siteHeader .lg\:block { display: none !important; }
+
+            /* 主体变纵向堆叠 */
+            #mainBody {
+                flex-direction: column !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+
+            /* 左侧栏手机隐藏（manifesto 信息移到 footer） */
+            #leftPanel { display: none !important; }
+
+            /* 中间栏全宽 */
             #centerPanel {
-                width: 100% !important; max-width: 100% !important; min-width: 0 !important;
-                border-right: none !important; border-bottom: 1px solid #111;
-                height: auto !important; overflow: visible !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                border-right: none !important;
+                height: auto !important;
+                overflow: visible !important;
+                flex: none !important;
             }
-            #rightPanel { width: 100% !important; max-width: 100% !important; min-width: 0 !important; height: auto !important; }
-            #manifestoView, #tocView { overflow: visible !important; height: auto; }
-            #manifestoView .flex-1 { overflow: visible !important; max-height: none !important; }
-            #listView { height: auto !important; overflow: visible !important; }
-            #listView .flex-1 { overflow: visible !important; max-height: none !important; }
-            #articleView { overflow: visible !important; }
-            #articleView .flex-1 { overflow: visible !important; max-height: none !important; }
+
+            /* 列表高度自然 */
+            #listView {
+                flex: none !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+            #listView .overflow-y-auto {
+                overflow: visible !important;
+                height: auto !important;
+                flex: none !important;
+            }
+
+            /* 文章阅读区高度自然 */
+            #articleView {
+                flex: none !important;
+                height: auto !important;
+                overflow: visible !important;
+                min-height: 80dvh;
+            }
+            #articleView .overflow-y-auto {
+                overflow: visible !important;
+                height: auto !important;
+                flex: none !important;
+            }
+
+            /* 右侧栏全宽，仅保留联系方式 */
+            #rightPanel {
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                border-top: 1px solid #111;
+                flex: none !important;
+            }
             #drawArea { display: none !important; }
-            .article-body { font-size: 1rem; line-height: 1.9; }
+
+            /* 文章正文 */
+            .article-body { font-size: 1rem; line-height: 1.85; }
+            .article-body h2 { font-size: .72rem; margin-top: 2rem; }
+
+            /* cargo hover 减弱 */
+            .cargo-item:hover { padding-left: .75rem; }
+
+            /* 预渲染区不占空间 */
+            #allArticles { position: absolute; visibility: hidden; pointer-events: none; }
+
+            /* footer */
+            #siteFooter { height: 44px !important; }
+            #siteFooter .md\:block { display: none !important; }
         }
     </style>
 </head>
-<body class="h-screen w-screen p-3 md:p-6 flex flex-col box-border selection:bg-[#111111] selection:text-white">
+<body class="p-3 md:p-6 selection:bg-[#111] selection:text-white">
 
-<div id="outerWrap" class="border border-[#111111] w-full h-full flex flex-col justify-between relative bg-white overflow-hidden box-border">
+<div id="outerWrap" class="border border-[#111] w-full flex flex-col bg-white overflow-hidden">
 
-    <div class="flex w-full border-b border-[#111111] h-14 md:h-16 items-center justify-between px-4 md:px-6 z-10 bg-white shrink-0">
-        <div class="font-syne text-lg md:text-xl tracking-tighter flex items-center gap-2 md:gap-3">
-            <a href="/" class="tracking-tight font-black no-underline text-inherit">WORTH.EE</a>
-            <span class="text-[9px] bg-[#111111] text-white px-2 py-0.5 font-mono">[STATUS: LIVE]</span>
+    <!-- Header -->
+    <div id="siteHeader" class="flex w-full border-b border-[#111] h-14 md:h-16 items-center justify-between px-4 md:px-6 bg-white shrink-0 z-10">
+        <div class="font-syne text-lg md:text-xl tracking-tighter flex items-center gap-2">
+            <a href="/" class="font-black no-underline text-inherit tracking-tight">WORTH.EE</a>
+            <span class="text-[9px] bg-[#111] text-white px-2 py-0.5 font-mono">[STATUS: LIVE]</span>
         </div>
         <div class="text-[10px] font-mono text-neutral-400 hidden lg:block tracking-wider">{{ site.location }}</div>
-        <div class="font-mono text-xs tracking-widest text-neutral-800 font-medium" id="clock">00:00:00</div>
+        <div class="font-mono text-xs tracking-widest text-neutral-800" id="clock">00:00:00</div>
     </div>
 
-    <div id="mainBody" class="flex-1 flex flex-row w-full overflow-hidden min-h-0">
+    <!-- 主体 -->
+    <div id="mainBody" class="flex flex-row w-full overflow-hidden" style="flex:1;min-height:0;">
 
         <!-- ① 左侧栏 -->
-        <div id="leftPanel" class="w-[32%] max-w-[32%] min-w-[32%] border-r border-[#111111] flex flex-col bg-[#fafafa] overflow-hidden box-border">
+        <div id="leftPanel" class="w-[32%] max-w-[32%] min-w-[32%] border-r border-[#111] flex flex-col bg-[#fafafa] overflow-hidden">
 
+            <!-- Manifesto -->
             <div id="manifestoView" class="p-5 md:p-6 flex flex-col justify-between h-full">
                 <div class="text-[10px] font-mono text-neutral-400 tracking-widest shrink-0">[01 // MANIFESTO]</div>
-                <div class="flex-1 overflow-y-auto no-scrollbar text-xs font-bold tracking-wider leading-relaxed break-all flex flex-col justify-start mt-3">
-                    <div class="text-neutral-400 transition-colors duration-500 hover:text-neutral-600 cursor-default">
+                <div class="flex-1 overflow-y-auto no-scrollbar text-xs font-bold tracking-wider leading-relaxed break-all flex flex-col mt-3">
+                    <div class="text-neutral-400 hover:text-neutral-600 transition-colors duration-500 cursor-default">
                         <p>花園裡邊明晃晃的，紅的紅，綠的綠，新鮮漂亮。</p>
                         <p>花開了，開了，就像睡醒了似的。鳥飛了，就像在天上逛似的。蟲子叫了，就像蟲子在說話似的。</p>
                         <p>一切都活了，都有無限的本领，要做什麼，就做什麼。要怎麼樣，就怎麼樣，都是自由的。</p>
                     </div>
-                    <div class="text-[#111111]">
+                    <div class="text-[#111] mt-3">
                         <p>倭瓜願意爬上房就爬上房，願意爬上樹就爬上樹。</p>
                         <p>黃瓜願意開一個謊花，就開一個謊花，願意結一個黃瓜，就結一個黃瓜。若都不願意，職是一個黃瓜也不結，一朵花也不開，也沒有人問它。</p>
                         <p>玉米願意長多高就長多高，他若願意長到天上去，也沒有人管他。</p>
@@ -126,8 +218,9 @@
                 </div>
             </div>
 
+            <!-- 目录 -->
             <div id="tocView" class="p-4 flex flex-col h-full">
-                <div class="text-[10px] font-mono text-neutral-400 tracking-widest mb-4 flex items-center justify-between shrink-0">
+                <div class="text-[10px] font-mono text-neutral-400 tracking-widest mb-4 flex justify-between shrink-0">
                     <span>[INDEX]</span>
                     <span class="back-btn" id="backToManifesto">✕</span>
                 </div>
@@ -135,7 +228,7 @@
                     {% for post in collections.posts %}
                     <div class="toc-item py-2 border-b border-dotted border-neutral-200" data-index="{{ loop.index }}">
                         <div class="text-[9px] font-mono text-neutral-400 mb-1">[{{ loop.index | idx }}] {{ post.date | date("yyyy.MM.dd") }}</div>
-                        <div class="text-xs font-bold text-neutral-800 leading-snug">{{ post.data.title | truncate(30) }}</div>
+                        <div class="text-xs font-bold text-neutral-800 leading-snug">{{ post.data.title | truncate(28) }}</div>
                     </div>
                     {% endfor %}
                 </div>
@@ -144,83 +237,81 @@
         </div>
 
         <!-- ② 中间栏 -->
-        <div id="centerPanel" class="w-[46%] max-w-[46%] min-w-[46%] border-r border-[#111111] flex flex-col overflow-hidden bg-white box-border">
+        <div id="centerPanel" class="w-[46%] max-w-[46%] min-w-[46%] border-r border-[#111] flex flex-col overflow-hidden bg-white">
 
             <!-- 文章列表 -->
             <div id="listView">
-                <div class="p-4 border-b border-[#111111] text-[10px] font-mono text-neutral-400 flex justify-between bg-[#fafafa] shrink-0">
+                <div class="p-4 border-b border-[#111] text-[10px] font-mono text-neutral-400 flex justify-between bg-[#fafafa] shrink-0">
                     <span>[INDEXED REGISTRY]</span>
                     <span class="hidden md:block">SCROLL TO UNCOVER ↓</span>
                 </div>
-                <div class="flex-1 overflow-y-auto no-scrollbar divide-y divide-[#111111]">
+                <div class="overflow-y-auto no-scrollbar divide-y divide-[#111]" style="flex:1;min-height:0;">
                     {% for post in collections.posts %}
-                    <div class="p-5 md:p-6 cargo-item cursor-pointer" data-index="{{ loop.index }}">
-                        <div class="flex items-center justify-between text-[10px] font-mono text-neutral-400 mb-2">
+                    <div class="p-5 md:p-6 cargo-item" data-index="{{ loop.index }}">
+                        <div class="flex justify-between text-[10px] font-mono text-neutral-400 mb-2">
                             <span>[{{ loop.index | idx }} / {{ post.data.category }}]</span>
                             <span>{{ post.date | date("yyyy.MM.dd") }}</span>
                         </div>
-                        <h2 class="text-base md:text-lg font-bold text-neutral-900 tracking-tight leading-snug">
-                            {{ post.data.title }}
-                        </h2>
+                        <h2 class="text-base md:text-lg font-bold text-neutral-900 tracking-tight leading-snug">{{ post.data.title }}</h2>
                         {% if post.data.excerpt %}
-                        <p class="text-xs text-neutral-400 mt-2 font-mono">{{ post.data.excerpt }}</p>
+                        <p class="text-xs text-neutral-400 mt-2 font-mono leading-relaxed">{{ post.data.excerpt }}</p>
                         {% endif %}
                     </div>
                     {% endfor %}
                 </div>
             </div>
 
-            <!-- 文章阅读视图：内容构建时直接嵌入，隐藏在 DOM 里 -->
+            <!-- 文章阅读 -->
             <div id="articleView">
-                <div class="p-4 border-b border-[#111111] text-[10px] font-mono text-neutral-400 flex justify-between bg-[#fafafa] shrink-0">
+                <div class="p-4 border-b border-[#111] text-[10px] font-mono text-neutral-400 flex justify-between bg-[#fafafa] shrink-0">
                     <span id="articleTag"></span>
                     <span class="back-btn" id="backToList">← BACK</span>
                 </div>
-                <div class="flex-1 overflow-y-auto no-scrollbar p-6 md:p-8 min-h-0">
+                <div class="overflow-y-auto no-scrollbar p-6 md:p-8" style="flex:1;min-height:0;">
                     <div id="articleDate" class="text-[10px] font-mono text-neutral-400 mb-3"></div>
                     <h1 id="articleTitle" class="text-xl md:text-2xl font-bold tracking-tight text-neutral-900 mb-6 leading-tight"></h1>
                     <div id="articleBody" class="article-body"></div>
                 </div>
             </div>
 
-            <!-- 所有文章内容预渲染，隐藏在此，JS 直接读取 -->
+            <!-- 预渲染内容（JS 读取，不占位） -->
             <div id="allArticles" style="display:none">
                 {% for post in collections.posts %}
                 <div data-article="{{ loop.index }}"
                      data-title="{{ post.data.title }}"
                      data-date="{{ post.date | date('yyyy.MM.dd') }}"
-                     data-category="{{ post.data.category or 'POST' }}">
-                    {{ post.templateContent | safe }}
-                </div>
+                     data-category="{{ post.data.category or 'POST' }}">{{ post.templateContent | safe }}</div>
                 {% endfor %}
             </div>
 
         </div>
 
         <!-- ③ 右侧栏 -->
-        <div id="rightPanel" class="w-[22%] max-w-[22%] min-w-[22%] flex flex-col justify-between bg-white overflow-hidden box-border">
-            <div id="drawArea" class="border-b border-[#111111] flex-1 flex flex-col relative bg-white overflow-hidden min-h-0">
-                <div class="p-4 text-[10px] font-mono text-neutral-400 border-b border-neutral-100 bg-white shrink-0">[DRAW_SPACE // INTERACTIVE]</div>
-                <div class="flex-1 relative w-full h-full bg-white select-none">
+        <div id="rightPanel" class="w-[22%] max-w-[22%] min-w-[22%] flex flex-col justify-between bg-white overflow-hidden">
+            <div id="drawArea" class="border-b border-[#111] flex-1 flex flex-col relative overflow-hidden min-h-0">
+                <div class="p-4 text-[10px] font-mono text-neutral-400 border-b border-neutral-100 shrink-0">[DRAW_SPACE // INTERACTIVE]</div>
+                <div class="flex-1 relative select-none">
                     <canvas id="drawCanvas" class="absolute inset-0 w-full h-full block"></canvas>
                 </div>
             </div>
-            <div class="p-5 md:p-6 bg-white flex flex-col gap-2.5 font-mono text-xs shrink-0">
+            <div class="p-5 md:p-6 flex flex-col gap-2.5 font-mono text-xs shrink-0">
                 <div class="text-neutral-400 text-[10px] mb-1 tracking-wider">[CONTACT_SIGNAL]</div>
-                <a href="mailto:{{ site.email }}" class="group flex justify-between items-center py-1 border-b border-dotted border-neutral-200 hover:border-[#111111] transition-colors no-underline text-inherit">
+                <a href="mailto:{{ site.email }}" class="group flex justify-between items-center py-1 border-b border-dotted border-neutral-200 hover:border-[#111] transition-colors no-underline text-inherit">
                     <span class="group-hover:translate-x-1 transition-transform duration-300">→ {{ site.email | upper }}</span>
-                    <span class="text-neutral-400 group-hover:text-[#111111]">[MAIL]</span>
+                    <span class="text-neutral-400 group-hover:text-[#111]">[MAIL]</span>
                 </a>
-                <a href="/feed.xml" class="group flex justify-between items-center py-1 border-b border-dotted border-neutral-200 hover:border-[#111111] transition-colors">
+                <!-- RSS：点击复制订阅地址 -->
+                <div id="rssBtn" class="group flex justify-between items-center py-1 border-b border-dotted border-neutral-200 hover:border-[#111] transition-colors cursor-pointer select-none">
                     <span class="group-hover:translate-x-1 transition-transform duration-300">→ SUBSCRIBE RSS</span>
-                    <span class="text-neutral-400 group-hover:text-[#111111]">[RSS]</span>
-                </a>
+                    <span id="rssStatus" class="text-neutral-400 group-hover:text-[#111]">[COPY URL]</span>
+                </div>
             </div>
         </div>
 
     </div>
 
-    <div class="flex w-full border-t border-[#111111] h-10 md:h-12 items-center justify-between px-4 md:px-6 text-[10px] font-mono text-neutral-400 bg-white shrink-0">
+    <!-- Footer -->
+    <div id="siteFooter" class="flex w-full border-t border-[#111] h-10 md:h-12 items-center justify-between px-4 md:px-6 text-[10px] font-mono text-neutral-400 bg-white shrink-0">
         <div>© 2026 WORTH.EE LIGHT PROTOCOL.</div>
         <div class="hidden md:block tracking-widest">ANTI-CONVENTIONAL STRUCTURE</div>
         <div class="text-neutral-800 hover:underline cursor-pointer" onclick="window.scrollTo({top:0,behavior:'smooth'})">▲ TOP</div>
@@ -228,12 +319,38 @@
 
 </div>
 
+<!-- RSS 复制提示 -->
+<div id="rssToast">RSS URL COPIED</div>
+
 <script>
-(function tick() {
+// 时钟
+(function tick(){
     document.getElementById('clock').textContent = new Date().toTimeString().split(' ')[0];
     setTimeout(tick, 1000);
 })();
 
+// RSS 复制
+document.getElementById('rssBtn').addEventListener('click', function() {
+    const url = 'https://worth.ee/feed.xml';
+    const s   = document.getElementById('rssStatus');
+    const t   = document.getElementById('rssToast');
+
+    navigator.clipboard.writeText(url).then(() => {
+        s.textContent = '[COPIED!]';
+        s.style.color = '#111';
+        t.classList.add('show');
+        setTimeout(() => {
+            s.textContent = '[COPY URL]';
+            s.style.color = '';
+            t.classList.remove('show');
+        }, 2200);
+    }).catch(() => {
+        // 降级：prompt 让用户手动复制
+        window.prompt('复制订阅地址：', url);
+    });
+});
+
+// 文章开关
 const leftPanel     = document.getElementById('leftPanel');
 const centerPanel   = document.getElementById('centerPanel');
 const manifestoView = document.getElementById('manifestoView');
@@ -252,9 +369,9 @@ function openArticle(index) {
     document.getElementById('articleTitle').textContent = src.dataset.title;
     document.getElementById('articleBody').innerHTML    = src.innerHTML;
 
-    document.querySelectorAll('.toc-item').forEach(el => {
-        el.classList.toggle('active-toc', el.dataset.index === String(index));
-    });
+    document.querySelectorAll('.toc-item').forEach(el =>
+        el.classList.toggle('active-toc', el.dataset.index === String(index))
+    );
 
     if (!isMobile()) {
         manifestoView.classList.add('hidden-view');
@@ -266,6 +383,7 @@ function openArticle(index) {
     } else {
         listView.classList.add('hidden-view');
         articleView.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 }
 
@@ -276,18 +394,19 @@ function closeArticle() {
     articleView.classList.remove('active');
     listView.classList.remove('hidden-view');
     centerPanel.style.cssText = '';
+    if (isMobile()) window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-document.querySelectorAll('.cargo-item[data-index]').forEach(el => {
-    el.addEventListener('click', () => openArticle(+el.dataset.index));
-});
-document.querySelectorAll('.toc-item[data-index]').forEach(el => {
-    el.addEventListener('click', () => openArticle(+el.dataset.index));
-});
+document.querySelectorAll('.cargo-item[data-index]').forEach(el =>
+    el.addEventListener('click', () => openArticle(+el.dataset.index))
+);
+document.querySelectorAll('.toc-item[data-index]').forEach(el =>
+    el.addEventListener('click', () => openArticle(+el.dataset.index))
+);
 document.getElementById('backToList').addEventListener('click', closeArticle);
 document.getElementById('backToManifesto').addEventListener('click', closeArticle);
 
-// Canvas
+// Canvas 划线（桌面）
 const canvas = document.getElementById('drawCanvas');
 if (canvas) {
     const ctx = canvas.getContext('2d');
@@ -304,7 +423,7 @@ if (canvas) {
         lastPos = cur;
     });
     canvas.parentElement.addEventListener('mouseleave', () => { lastPos = null; });
-    function renderLoop() {
+    (function loop() {
         ctx.fillStyle = '#fff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         for (let i = lines.length - 1; i >= 0; i--) {
@@ -315,10 +434,10 @@ if (canvas) {
             l.alpha -= 0.008;
             if (l.alpha <= 0) lines.splice(i, 1);
         }
-        requestAnimationFrame(renderLoop);
-    }
+        requestAnimationFrame(loop);
+    })();
     window.addEventListener('resize', resizeCanvas);
-    resizeCanvas(); renderLoop();
+    resizeCanvas();
 }
 </script>
 </body>
