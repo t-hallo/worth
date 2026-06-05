@@ -3,10 +3,10 @@ permalink: /feed.xml
 eleventyExcludeFromCollections: true
 ---
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh-CN">
   <title>{{ site.title }}</title>
   <subtitle>{{ site.description }}</subtitle>
-  <link href="{{ site.url }}/feed.xml" rel="self"/>
+  <link href="{{ site.url }}/feed.xml" rel="self" type="application/atom+xml"/>
   <link href="{{ site.url }}/"/>
   <updated>{{ collections.posts | getNewestCollectionItemDate | dateToRfc3339 }}</updated>
   <id>{{ site.url }}/</id>
@@ -20,7 +20,7 @@ eleventyExcludeFromCollections: true
     <link href="{{ site.url }}{{ post.url }}"/>
     <updated>{{ post.date | dateToRfc3339 }}</updated>
     <id>{{ site.url }}{{ post.url }}</id>
-    <content type="html">{{ post.templateContent | htmlToAbsoluteUrls(site.url + post.url) }}</content>
+    <content type="html"><![CDATA[{{ post.templateContent | safe }}]]></content>
   </entry>
   {%- endfor %}
 </feed>
