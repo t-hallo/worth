@@ -247,15 +247,15 @@
         </div>
 
         <!-- ② 中间栏 -->
-        <div id="centerPanel" class="w-[46%] max-w-[46%] min-w-[46%] border-r border-[#111] flex flex-col overflow-hidden bg-white">
+        <div id="centerPanel" class="w-[46%] max-w-[46%] min-w-[46%] border-r border-[#111] bg-white" style="display:flex;flex-direction:column;overflow:hidden;">
 
             <!-- 文章列表 -->
-            <div id="listView">
+            <div id="listView" style="flex:1;min-height:0;display:flex;flex-direction:column;">
                 <div class="p-4 border-b border-[#111] text-[10px] font-mono text-neutral-400 flex justify-between bg-[#fafafa] shrink-0">
                     <span>[INDEXED REGISTRY]</span>
                     <span class="hidden md:block">SCROLL TO UNCOVER ↓</span>
                 </div>
-                <div class="overflow-y-auto no-scrollbar divide-y divide-[#111]" style="flex:1;min-height:0;">
+                <div class="overflow-y-auto no-scrollbar divide-y divide-[#111]" style="flex:1;min-height:0;overflow-y:auto;">
                     {% for post in collections.posts %}
                     <a href="{{ post.url }}" class="p-5 md:p-6 cargo-item block no-underline text-inherit">
                         <div class="flex justify-between text-[10px] font-mono text-neutral-400 mb-2">
